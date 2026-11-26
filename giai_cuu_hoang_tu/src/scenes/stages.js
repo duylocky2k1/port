@@ -19,23 +19,6 @@
         onEnter: function (s, ctx) { const x = ctx.npc.x; ctx.npc.x = x + 120; s.tweens.add({ targets: ctx.npc, x: x, duration: 700, ease: 'Sine.easeOut' }); } });
     }
   }
-  class Stage4Maze extends Phaser.Scene {
-    constructor() { super('Stage4Maze'); }
-    create() {
-      let gate;
-      G.runLearnStage(this, { no: 3, key: 'stage4', bg: 'maze', music: 'maze', npc: 'owl', npcX: 1280, npcScale: 5, ambient: ['dust'], treasure: 3, beamColor: '#7fe8ff', bannerColor: '#241848',
-        onEnter: function (s, ctx) { gate = s.add.image(1700, ctx.gy + 6, 'gate').setOrigin(0.5, 1).setScale(5).setDepth(8); },
-        hooks: { onCorrect: function (i, last) { const s = gate.scene; gate.setTexture('gate_open'); G.burst(s, gate.x, gate.y - 140, 'spark', 22, { speed: 420, life: 800, scale: 3, depth: 60 }); if (!last) s.time.delayedCall(2600, function () { if (gate.scene) gate.setTexture('gate'); }); } } });
-    }
-  }
-  class Stage5Summit extends Phaser.Scene {
-    constructor() { super('Stage5Summit'); }
-    create() {
-      G.runLearnStage(this, { no: 4, key: 'stage5', bg: 'summit', music: 'summit', npc: 'sage', npcX: 1440, npcScale: 5, ambient: ['clouds'], treasure: 4, beamColor: '#fff3c4', groundY: 700,
-        onEnter: function (s, ctx) { s.tweens.add({ targets: ctx.npc, y: ctx.npc.y - 14, duration: 1100, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' }); } });
-    }
-  }
-
   // ---------- Chặng 3: Suối Thực Hành (câu hỏi mở, nội dung trình bày cấu hình sẵn, mặc định ĐẠT) ----------
   class Stage3Stream extends Phaser.Scene {
     constructor() { super('Stage3Stream'); }
@@ -56,8 +39,8 @@
         },
         function (n) { ctx.dlg.say(c.npc, c.greeting, n, ctx.npc); },
         function (n) { ctx.paged.show({ pages: [{ title: c.questionTitle, body: c.question }], heading: '', doneLabel: c.presentBtn, tone: 'water', onDone: n }); },
-        function (n) { ctx.paged.show({ pages: c.presentation, heading: 'PHƯƠNG ÁN CỦA NHÓM', doneLabel: 'HOÀN THÀNH TRÌNH BÀY', tone: 'water', onDone: n,
-            warn: { title: 'CHƯA CẤU HÌNH PHẦN TRÌNH BÀY', body: 'Người tạo game cần điền nội dung trình bày vào file content/content.js (mục stage3.presentation):\nsản phẩm, ý tưởng chiến dịch, cơ chế tham gia, hoạt động chính, động lực, hiệu quả kỳ vọng.\n\nBấm nút bên dưới để bỏ qua và thử luồng game.' } }); },
+        function (n) { ctx.slides.show({ slides: c.presentation, heading: 'PHƯƠNG ÁN CỦA NHÓM', doneLabel: 'HOÀN THÀNH TRÌNH BÀY', color: '#4fb8e8', onDone: n,
+            warn: { title: 'CHƯA CẤU HÌNH PHẦN TRÌNH BÀY', body: 'Người tạo game cần điền slide trình bày vào file content/content.js (mục stage3.presentation).\n\nBấm nút bên dưới để bỏ qua và thử luồng game.' } }); },
         function (n) { // Tinh Linh suy nghĩ → đánh giá mặc định ĐẠT
           ctx.player.talkPose(); const q = [0, 1, 2].map(function (i) { return s.add.image(ctx.npc.x - 60 + i * 60, ctx.gy - 330, 'ic_q').setScale(5).setDepth(30); });
           q.forEach(function (o, i) { s.tweens.add({ targets: o, y: o.y - 20, duration: 400, yoyo: true, repeat: 2, delay: i * 120 }); });
@@ -76,5 +59,5 @@
       ]);
     }
   }
-  G.scenes.push(Stage1Forest, Stage2Library, Stage3Stream, Stage4Maze, Stage5Summit);
+  G.scenes.push(Stage1Forest, Stage2Library, Stage3Stream);
 })();

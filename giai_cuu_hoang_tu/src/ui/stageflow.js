@@ -10,7 +10,7 @@
     const player = G.makeChar(scene, st.char || 'ngocanh', 440, gy, 4).setDepth(20);
     const npc = cfg.npc ? G.makeNpc(scene, cfg.npc, cfg.npcX, gy, cfg.npcScale || 4).setDepth(19) : null;
     const bar = new G.StatusBar(scene, { noHp: !!cfg.noHp });
-    const ctx = { cfg: cfg, gy: gy, player: player, npc: npc, bar: bar, dlg: new G.Dialog(scene), paged: new G.Paged(scene), quiz: new G.Quiz(scene), name: cfg.npcName };
+    const ctx = { cfg: cfg, gy: gy, player: player, npc: npc, bar: bar, dlg: new G.Dialog(scene), paged: new G.Paged(scene), slides: new G.Slides(scene), quiz: new G.Quiz(scene), name: cfg.npcName };
     scene.ctx = ctx; G.audio.music(cfg.music);
     if (G.DEV) { G.txt(scene, G.W / 2, 24, 'DEV: phím N = bỏ qua chặng', 26, '#ff7a7e').setDepth(950); scene.input.keyboard.on('keydown-N', function () { ctx.dlg.hide(); if (cfg.treasure >= 0) G.state.giveTreasure(cfg.treasure); if (cfg.no < 5) { G.state.complete(cfg.no); G.go(scene, 'MapScene'); } else { G.state.data.bossDone = true; G.state.save(); G.go(scene, 'Victory'); } }); }
     G.fadeIn(scene);
@@ -63,15 +63,21 @@
   };
 
   // ---- màn hoàn thành chặng ----
-  G.stageComplete = function (scene, no, idx) {
-    const ctx = scene.ctx; G.audio.sfx('win'); ctx.player.cheer();
-    const t = G.txt(scene, G.W / 2, 250, 'CHẶNG ' + (no + 1) + ' HOÀN THÀNH!', 120, C.gold, { sw: 12 }).setDepth(700);
+  G.stageComplete = function (scene, no, idx, o) { // o: { label, extra, all }
+    o = o || {}; const ctx = scene.ctx; G.audio.sfx('win'); ctx.player.cheer();
+    const t = G.txt(scene, G.W / 2, 230, 'CHẶNG ' + (no + 1) + ' HOÀN THÀNH!', 120, C.gold, { sw: 12 }).setDepth(700);
     t.setScale(0.2); scene.tweens.add({ targets: t, scale: 1, duration: 500, ease: 'Back.easeOut' });
     for (let i = 0; i < 14; i++) { const s = scene.add.image(Math.random() * G.W, -20, 'ic_star').setScale(6 + Math.random() * 4).setDepth(699); scene.tweens.add({ targets: s, y: 800, angle: 360, alpha: 0.3, duration: 2200 + Math.random() * 1800, delay: Math.random() * 1200 }); }
-    const T = CT().treasures[idx], it = scene.add.image(G.W / 2, 450, 'tr_' + idx).setScale(6).setDepth(700), nm = G.txt(scene, G.W / 2, 560, T.name, 52, '#ffffff', { sw: 6 }).setDepth(700);
-    scene.tweens.add({ targets: it, y: 440, duration: 700, yoyo: true, repeat: -1 });
+    if (o.extra) G.txt(scene, G.W / 2, 340, o.extra, 64, '#ffffff', { sw: 8 }).setDepth(700);
+    if (o.all) { // bảng tổng kết 5 bảo vật
+      G.panel(scene, 260, 390, 1400, 240, { fill: '#241848', border: C.gold, rivets: true }).setDepth(699);
+      CT().treasures.forEach(function (T, k) { const x = 400 + k * 280, im = scene.add.image(x, 480, 'tr_' + k).setScale(4.4).setDepth(700); G.txt(scene, x, 580, T.name, 26, C.cream, { wrap: 260, sw: 3 }).setDepth(700); scene.tweens.add({ targets: im, y: 470, duration: 600, yoyo: true, repeat: -1, delay: k * 120 }); });
+    } else {
+      const T = CT().treasures[idx], it = scene.add.image(G.W / 2, 450, 'tr_' + idx).setScale(6).setDepth(700); G.txt(scene, G.W / 2, 560, T.name, 52, '#ffffff', { sw: 6 }).setDepth(700);
+      scene.tweens.add({ targets: it, y: 440, duration: 700, yoyo: true, repeat: -1 });
+    }
     G.state.complete(no);
-    G.button(scene, G.W / 2, 700, 620, 96, 'TIẾP TỤC HÀNH TRÌNH', function () { G.go(scene, 'MapScene'); }, { color: 'green', blink: true, size: 52 }).setDepth(701);
+    G.button(scene, G.W / 2, 720, 680, 96, o.label || 'TIẾP TỤC HÀNH TRÌNH', function () { G.go(scene, 'MapScene'); }, { color: 'green', blink: true, size: 52 }).setDepth(701);
   };
 
   // ---- hỏi từng câu (có HP) ----
@@ -80,11 +86,12 @@
     if (!qs.length) { ctx.paged.show({ pages: null, heading: content.quizTitle, warn: { title: 'CHƯA CẤU HÌNH CÂU HỎI', body: 'Người tạo game cần điền câu hỏi vào file content/content.js (mục questions của chặng này).\n\nBấm nút bên dưới để bỏ qua và thử luồng game.' }, onDone: done }); return; }
     function ask() {
       const q = qs[i];
-      ctx.quiz.show({ title: content.quizTitle + (qs.length > 1 ? '  (' + (i + 1) + '/' + qs.length + ')' : ''), q: q.q, options: q.options, answer: q.answer, reveal: false, onResult: function (ok) {
+      ctx.quiz.show({ title: content.quizTitle + (qs.length > 1 ? '  (' + (i + 1) + '/' + qs.length + ')' : ''), q: q.q, options: q.options, answer: q.answer, reveal: false, okText: content.okText, badText: content.badText, onResult: function (ok) {
         ctx.quiz.hide();
         if (ok) {
           ctx.player.cheer(); if (hooks && hooks.onCorrect) hooks.onCorrect(i, i === qs.length - 1);
-          i++; if (i >= qs.length) { ctx.dlg.say(ctx.name, content.correct, done, ctx.npc); } else { ctx.dlg.say(ctx.name, content.correct.slice(0, 1), ask, ctx.npc); }
+          const after = function () { i++; if (i >= qs.length) { ctx.dlg.say(ctx.name, content.correct, done, ctx.npc); } else { ctx.dlg.say(ctx.name, content.correct.slice(0, 1), ask, ctx.npc); } };
+          if (q.explain && q.explain.length) ctx.slides.show({ slides: q.explain, doneLabel: 'TIẾP TỤC', onDone: after }); else after();
         } else {
           G.state.hp--; ctx.bar.setHp(G.state.hp, true); G.audio.sfx('hurt'); ctx.player.sad(); scene.cameras.main.shake(200, 0.006);
           if (G.state.hp <= 0) { scene.time.delayedCall(700, function () { G.go(scene, 'GameOver', { retry: scene.scene.key }); }); return; }
@@ -103,7 +110,7 @@
       function (n) { ctx.player.alpha = 0; if (ctx.npc) ctx.npc.alpha = 0; G.beam(scene, ctx.player.x, ctx.gy, cfg.beamColor, n); scene.time.delayedCall(500, function () { ctx.player.alpha = 1; if (ctx.npc) ctx.npc.alpha = 1; }); },
       function (n) { if (cfg.onEnter) cfg.onEnter(scene, ctx); ctx.dlg.say(c.npc, c.greeting, n, ctx.npc); },
       function (n) { G.banner(scene, c.challenge, c.learnBtn, n, cfg.bannerColor); },
-      function (n) { ctx.paged.show({ pages: c.pages, heading: c.challenge, doneLabel: 'XONG', onDone: n }); },
+      function (n) { ctx.slides.show({ slides: c.pages, heading: c.pageHeading, doneLabel: 'XONG', onDone: n, warn: { title: 'CHƯA CẤU HÌNH NỘI DUNG BÀI HỌC', body: 'Người tạo game cần điền slide vào file content/content.js (mục pages của chặng này).\n\nBấm nút bên dưới để bỏ qua và thử luồng game.' } }); },
       function (n) { ctx.dlg.say(c.npc, c.preQuiz, n, ctx.npc); },
       function (n) { G.banner(scene, c.quizTitle, c.quizBtn, n, '#241848'); },
       function (n) { G.askQuestions(scene, c, cfg.hooks, n); },

@@ -87,7 +87,8 @@
       o.push(G.txt(s, bx + bw - 60, by + 62, 'ĐỘ KHÓ', 34, '#ffffff', { ox: 1, sw: 3 }).setDepth(201));
       for (let k = 0; k < 5; k++) o.push(s.add.image(bx + bw - 300 + k * 46 + 0, by + 112, k < d.diff ? 'ic_star' : 'ic_star_g').setScale(4.4).setDepth(201));
       o.push(G.txt(s, bx + 60, by + 150, 'NHIỆM VỤ: ' + d.mission, 34, '#ffffff', { ox: 0, oy: 0, align: 'left', wrap: bw - 120, sw: 3 }).setDepth(201));
-      o.push(G.button(s, bx + bw - 250, by + bh - 50, 400, 70, done ? 'CHƠI LẠI' : 'BẮT ĐẦU', function () { s.start(i); }, { color: 'green', blink: true, size: 48 }).setDepth(202));
+      const lbl = done ? 'CHƠI LẠI' : (isLair && ct.lair.startBtn ? ct.lair.startBtn : 'BẮT ĐẦU'), lw = lbl.length > 12 ? 720 : 400;
+      o.push(G.button(s, bx + bw - 50 - lw / 2, by + bh - 50, lw, 70, lbl, function () { s.start(i); }, { color: isLair ? 'red' : 'green', blink: true, size: lbl.length > 12 ? 40 : 48 }).setDepth(202));
       o.push(G.button(s, bx + 150, by + bh - 50, 220, 70, 'ĐÓNG', function () { s.closeInfo(); }, { color: 'gray', size: 38 }).setDepth(202));
       s.info = o; n.cont.setScale(1.1);
     }
@@ -95,7 +96,7 @@
     start(i) {
       const s = this; s.busy = true; s.closeInfo(); const p = G.mapNodes[i + 1]; G.audio.sfx('teleport');
       s.tweens.add({ targets: s.player, x: p.x - 110, y: p.y + 20, duration: 700, ease: 'Sine.easeInOut', onComplete: function () {
-        G.beam(s, s.player.x, s.player.y, '#ffd84a', function () { G.go(s, i === 5 ? 'BossLair' : G.stageScene[i]); });
+        G.beam(s, s.player.x, s.player.y, ['#ffd84a', '#ffd84a', '#7fe8ff', '#b98aff', '#bfefff', '#e0383e'][i], function () { G.go(s, i === 5 ? 'BossLair' : G.stageScene[i]); });
       } });
     }
   }

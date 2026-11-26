@@ -10,7 +10,7 @@
       const self = this; let started = false;
       function go() {
         if (started) return; started = true;
-        G.art.buildCharacters(self); G.art.buildWorld(self); G.audio.music(null);
+        G.art.buildCharacters(self); G.art.buildWorld(self); G.art.buildProps(self); G.audio.music(null);
         if (G.DEV) { // ?dev=1&scene=Stage1Forest&char=minhthu&done=2  → nhảy thẳng tới cảnh để thử (không ghi lưu)
           const q = function (k) { const m = new RegExp('[?&]' + k + '=(\\w+)').exec(location.search); return m && m[1]; };
           if (q('scene')) { const d = G.state.data; d.char = q('char') || d.char || 'ngocanh'; const n = parseInt(q('done') || '0'); for (let i = 0; i < 5; i++) { d.completed[i] = i < n; d.treasures[i] = i < n; } d.newUnlock = -1; self.scene.start(q('scene')); return; }
@@ -132,14 +132,17 @@
   // ---------- GAME OVER ----------
   class GameOver extends Phaser.Scene {
     constructor() { super('GameOver'); }
-    init(data) { this.retry = data && data.retry; }
+    init(data) { this.retry = data && data.retry; this.boss = !!(data && data.boss); }
     create() {
       const s = this; s._leaving = false; G.audio.music(null); s.cameras.main.setBackgroundColor('#120a24'); G.bg(s, 'maze').setTint(0x442244); G.audio.sfx('gameover');
       const t = G.txt(s, G.W / 2, 250, 'GAME OVER', 220, '#e0383e', { sw: 20 }).setDepth(10); t.setScale(0.3); s.tweens.add({ targets: t, scale: 1, duration: 600, ease: 'Back.easeOut' });
       const ch = G.makeChar(s, G.state.data.char || 'ngocanh', G.W / 2, 700, 6).setDepth(10); ch.bodyImg.setTint(0x8888aa); ch.idleTween.stop();
-      G.txt(s, G.W / 2, 440, 'Bạn đã hết 5 trái tim. Bảo vật đã nhận vẫn được giữ nguyên!', 44, '#ffffff', { wrap: 1500 }).setDepth(10);
-      const retry = this.retry;
-      if (retry) G.button(s, G.W / 2 - 330, 900, 580, 110, 'CHƠI LẠI CHẶNG', function () { G.go(s, retry); }, { color: 'green', blink: true, size: 64 }).setDepth(10);
+      const retry = this.retry, boss = this.boss, cb = window.GAME_CONTENT.boss;
+      if (boss) { // [SPEC] Rồng Giáo Sư chế nhạo; chơi lại ngay tại Tổ Tri Thức
+        G.bg(s, 'lair').setTint(0x553355); const d = G.makeNpc(s, 'dragon', 1560, 760, 3.6).setDepth(9); d.talk(true);
+        G.txt(s, G.W / 2, 430, cb.gameOver.join('\n'), 44, '#ffb3b3', { wrap: 1500 }).setDepth(10);
+      } else G.txt(s, G.W / 2, 440, 'Bạn đã hết 5 trái tim. Bảo vật đã nhận vẫn được giữ nguyên!', 44, '#ffffff', { wrap: 1500 }).setDepth(10);
+      if (retry) G.button(s, G.W / 2 - 330, 900, 580, 110, boss ? cb.gameOverBtn : 'CHƠI LẠI CHẶNG', function () { G.go(s, retry); }, { color: 'green', blink: true, size: 64 }).setDepth(10);
       G.button(s, G.W / 2 + (retry ? 330 : 0), 900, 580, 110, 'VỀ BẢN ĐỒ', function () { G.go(s, 'MapScene'); }, { color: 'blue', size: 64 }).setDepth(10);
       G.fadeIn(s);
     }

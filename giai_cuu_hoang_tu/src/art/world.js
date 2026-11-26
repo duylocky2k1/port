@@ -91,26 +91,28 @@
       P(c, SK, 5, 25, 4, 8); if (m) { P(c, SK, 23, 12, 4, 14); P(c, SK, 24, 9, 3, 3); } else P(c, SK, 23, 25, 4, 8);
       P(c, '#ffd84a', 5, 25, 4, 1); P(c, '#ffd84a', 23, m ? 24 : 25, 4, 1);
     } },
-    dragon: { w: 104, h: 104, fn: function (c, m, b) {
+    dragon: { w: 104, h: 104, fn: function (c, m, b) { // [SPEC] thân đỏ đậm, áo choàng đen tím viền vàng, quyền trượng + xấp Journal
+      const WD = '#6e0f1c', BODY = '#b3202f', DARK = '#4a0812';
       // cánh dơi
-      tri(c, '#2e7d32', [30, 40], [2, 10], [8, 62]); tri(c, '#2e7d32', [30, 40], [8, 62], [26, 56]); tri(c, '#2e7d32', [74, 40], [102, 10], [96, 62]); tri(c, '#2e7d32', [74, 40], [96, 62], [78, 56]);
-      tri(c, '#4caf50', [30, 42], [6, 16], [14, 50]); tri(c, '#4caf50', [74, 42], [98, 16], [90, 50]);
-      [[2, 10, 30, 40], [2, 10, 20, 52], [14, 30, 30, 44]].forEach(function (b) { for (let k = 0; k < 20; k++) { const t = k / 20; P(c, '#1b5e20', Math.round(b[0] + (b[2] - b[0]) * t), Math.round(b[1] + (b[3] - b[1]) * t), 2, 2); P(c, '#1b5e20', Math.round(102 - (b[0] + (b[2] - b[0]) * t)), Math.round(b[1] + (b[3] - b[1]) * t), 2, 2); } });
+      tri(c, WD, [30, 40], [2, 10], [8, 62]); tri(c, WD, [30, 40], [8, 62], [26, 56]); tri(c, WD, [74, 40], [102, 10], [96, 62]); tri(c, WD, [74, 40], [96, 62], [78, 56]);
+      tri(c, BODY, [30, 42], [6, 16], [14, 50]); tri(c, BODY, [74, 42], [98, 16], [90, 50]);
+      [[2, 10, 30, 40], [2, 10, 20, 52], [14, 30, 30, 44]].forEach(function (b) { for (let k = 0; k < 20; k++) { const t = k / 20; P(c, DARK, Math.round(b[0] + (b[2] - b[0]) * t), Math.round(b[1] + (b[3] - b[1]) * t), 2, 2); P(c, DARK, Math.round(102 - (b[0] + (b[2] - b[0]) * t)), Math.round(b[1] + (b[3] - b[1]) * t), 2, 2); } });
       // thân + áo choàng
-      G.ellipse(c, '#4caf50', 52, 66, 30, 30); G.ellipse(c, '#d8f0a8', 52, 72, 18, 20);
-      for (let y = 0; y < 32; y++) { const w = 40 + y; P(c, '#22306b', 52 - Math.floor(w / 2), 66 + y, w, 1); } P(c, '#ffd84a', 36, 96, 32, 2); P(c, '#ffd84a', 51, 66, 2, 30); P(c, '#2e3d8b', 38, 76, 3, 20); P(c, '#2e3d8b', 63, 76, 3, 20);
-      P(c, '#4caf50', 42, 98, 8, 5); P(c, '#4caf50', 54, 98, 8, 5);
-      // tay + journal
-      P(c, '#4caf50', 20, 70, 10, 8); P(c, '#4caf50', 74, 70, 10, 8); G.blob(c, '#ffffff', 10, 56, 14, 18); P(c, '#1b6ac9', 12, 58, 10, 2); P(c, '#8aa0c8', 12, 64, 10, 1); P(c, '#8aa0c8', 12, 67, 10, 1);
+      G.ellipse(c, BODY, 52, 66, 30, 30); G.ellipse(c, '#f0b08a', 52, 72, 18, 20); for (let y = 60; y < 90; y += 5) P(c, '#d9906a', 40, y, 24, 1);
+      for (let y = 0; y < 32; y++) { const w = 40 + y; P(c, '#24102e', 52 - Math.floor(w / 2), 66 + y, w, 1); } P(c, '#ffd84a', 36, 96, 32, 2); P(c, '#ffd84a', 51, 66, 2, 30); P(c, '#3d1a52', 38, 76, 3, 20); P(c, '#3d1a52', 63, 76, 3, 20); P(c, '#ffd84a', 34, 66, 2, 30); P(c, '#ffd84a', 68, 66, 2, 30);
+      P(c, BODY, 42, 98, 8, 5); P(c, BODY, 54, 98, 8, 5);
+      // tay + journal + quyền trượng
+      P(c, BODY, 20, 70, 10, 8); P(c, BODY, 74, 70, 10, 8); G.blob(c, '#ffffff', 10, 56, 14, 18); P(c, '#1b6ac9', 12, 58, 10, 2); P(c, '#8aa0c8', 12, 64, 10, 1); P(c, '#8aa0c8', 12, 67, 10, 1); G.blob(c, '#e8e0c8', 8, 60, 14, 16); P(c, '#c0392b', 10, 62, 10, 2);
+      P(c, '#b8860b', 86, 40, 3, 60); P(c, '#ffd84a', 86, 40, 1, 60); G.ellipse(c, '#9b59ff', 87, 36, 5, 5); P(c, '#e0c8ff', 85, 33, 2, 2); P(c, BODY, 82, 70, 8, 7);
       // đầu
-      G.ellipse(c, '#4caf50', 52, 34, 24, 19); G.ellipse(c, '#7ccf7c', 52, 46, 15, 9); P(c, '#2e7d32', 46, 45, 2, 2); P(c, '#2e7d32', 56, 45, 2, 2);
+      G.ellipse(c, BODY, 52, 34, 24, 19); G.ellipse(c, '#d84a4a', 52, 46, 15, 9); P(c, DARK, 46, 45, 2, 2); P(c, DARK, 56, 45, 2, 2); for (let x = 36; x < 70; x += 6) P(c, '#8a1424', x, 22, 3, 2);
       P(c, '#fff3c4', 30, 14, 4, 8); P(c, '#fff3c4', 31, 10, 2, 4); P(c, '#fff3c4', 70, 14, 4, 8); P(c, '#fff3c4', 71, 10, 2, 4);
       // kính
       [40, 64].forEach(function (x) { G.ellipse(c, '#1b1030', x, 33, 9, 9); G.ellipse(c, '#e8f6ff', x, 33, 7, 7); if (b) P(c, INK, x - 4, 34, 8, 2); else { G.ellipse(c, '#ffd84a', x, 34, 3, 3); P(c, INK, x - 1, 33, 3, 3); } });
       P(c, '#1b1030', 48, 32, 8, 2); P(c, '#1b1030', 32, 24, 14, 2); P(c, '#1b1030', 58, 24, 14, 2); P(c, '#1b1030', 44, 26, 2, 2); P(c, '#1b1030', 58, 26, 2, 2);
       // miệng
       if (m) { G.ellipse(c, '#6b1d1d', 52, 52, 10, 5); P(c, '#e04050', 46, 53, 12, 3); [44, 48, 56, 60].forEach(function (x) { P(c, '#ffffff', x, 48, 2, 3); }); }
-      else { P(c, '#1b5e20', 42, 52, 20, 2); P(c, '#ffffff', 44, 54, 2, 3); P(c, '#ffffff', 58, 54, 2, 3); }
+      else { P(c, '#4a0812', 42, 52, 20, 2); P(c, '#ffffff', 44, 54, 2, 3); P(c, '#ffffff', 58, 54, 2, 3); }
       // mũ tốt nghiệp
       P(c, '#1b1030', 38, 8, 28, 8); P(c, '#1b1030', 24, 5, 56, 4); P(c, '#2a2050', 28, 5, 48, 1); P(c, '#ffd84a', 50, 4, 4, 3); P(c, '#ffd84a', 78, 8, 2, 16); P(c, '#ffd84a', 76, 22, 6, 5);
     } },
@@ -253,6 +255,9 @@
       brickFloor(c, 182, '#3a2860', '#5a4090', '#241848');
     },
   };
+
+  G.art.bgDefs = BG; // props.js thêm bối cảnh mới vào đây
+  G.art.h = { skyBands: skyBands, tri: tri, mountains: mountains, pine: pine, roundTree: roundTree, grass: grass, brickFloor: brickFloor, prasat: prasat, lights: lights, eyePair: eyePair };
 
   // bản đồ 480x270 nhìn từ trên xuống
   function drawMap(c) {

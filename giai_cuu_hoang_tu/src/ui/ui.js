@@ -129,21 +129,21 @@
   // ---------- bảng câu hỏi trắc nghiệm ----------
   G.Quiz = function (scene) { this.scene = scene; this.objs = []; };
   G.Quiz.prototype = {
-    show: function (cfg) { // cfg: { title, q, options, answer, onResult(correct) , tone }
+    show: function (cfg) { // cfg: { title, q, options, answer, onResult(correct), box:{x,y,w,h}, fill, border, okText, badText, zoomCorrect, zoomBtn, dim }
       const s = this.scene, self = this; this.hide();
-      const bx = 220, by = 50, bw = 1480, bh = 700;
-      const dim = s.add.rectangle(0, 0, G.W, G.H, 0x000000, 0.45).setOrigin(0).setInteractive().setDepth(600);
-      const panel = G.panel(s, bx, by, bw, bh, { fill: '#241848', border: C.gold, rivets: true }).setDepth(601);
-      const head = G.txt(s, bx + bw / 2, by + 44, cfg.title || 'CÂU HỎI', 46, C.gold).setDepth(602);
+      const B = cfg.box || {}, bx = B.x || 220, by = B.y || 50, bw = B.w || 1480, bh = B.h || 840;
+      const dim = s.add.rectangle(0, 0, G.W, G.H, 0x000000, cfg.dim === undefined ? 0.45 : cfg.dim).setOrigin(0).setInteractive().setDepth(600);
+      const panel = G.panel(s, bx, by, bw, bh, { fill: cfg.fill || '#241848', border: cfg.border || C.gold, rivets: true }).setDepth(601);
+      const head = G.txt(s, bx + bw / 2, by + 44, cfg.title || 'CÂU HỎI', 46, C.gold, { wrap: bw - 80 }).setDepth(602); while (head.height > 60 && parseInt(head.style.fontSize, 10) > 28) head.setFontSize(parseInt(head.style.fontSize, 10) - 2);
       const q = G.txt(s, bx + 60, by + 96, cfg.q, 42, '#ffffff', { ox: 0, oy: 0, align: 'left', wrap: bw - 120 }).setDepth(602);
       let fs = 42; while (q.height > 150 && fs > 26) { fs -= 2; q.setFontSize(fs); }
       this.objs = [dim, panel, head, q];
       const opts = cfg.options, rows = []; let sel = -1, locked = false, y = by + 96 + Math.max(q.height, 60) + 24;
       const letters = ['A', 'B', 'C', 'D', 'E'];
-      const avail = bh - (y - by) - 100, perRow = Math.min(100, Math.floor(avail / opts.length) - 10);
+      const avail = bh - (y - by) - 100, perRow = Math.min(cfg.rowMax || 100, Math.floor(avail / opts.length) - 10);
       opts.forEach(function (o, i) {
         const row = s.add.container(bx + bw / 2, y + perRow / 2), g = s.add.graphics();
-        const t = G.txt(s, -bw / 2 + 120, 0, o, perRow < 80 ? 32 : 36, '#ffffff', { ox: 0, wrap: bw - 260, align: 'left', sw: 3 });
+        const t = G.txt(s, -bw / 2 + 120, 0, o, perRow < 80 ? 32 : 40, '#ffffff', { ox: 0, wrap: bw - 260, align: 'left', sw: 3 });
         while (t.height > perRow - 10 && t.style.fontSize !== '22px') { t.setFontSize(parseInt(t.style.fontSize) - 2); if (parseInt(t.style.fontSize) <= 22) break; }
         const L = G.txt(s, -bw / 2 + 74, 0, letters[i], 46, C.gold);
         row.add([g, L, t]); row.setSize(bw - 100, perRow).setDepth(603);
@@ -160,9 +160,23 @@
       const confirm = G.button(s, bx + bw / 2, by + bh - 50, 520, 72, 'XÁC NHẬN ĐÁP ÁN', function () {
         if (sel < 0 || locked) return; locked = true; confirm.setEnabled(false); const ok = sel === cfg.answer;
         rows[sel].paint(ok ? 'ok' : 'bad'); if (!ok && cfg.answer >= 0 && cfg.reveal) rows[cfg.answer].paint('ok');
-        const res = G.txt(s, G.W / 2, 380, ok ? 'CHÍNH XÁC!' : 'CHƯA CHÍNH XÁC!', 110, ok ? '#7ae09a' : '#ff7a7e', { sw: 10 }).setDepth(700); self.objs.push(res);
+        const cy = by + bh / 2 - 20, res = G.txt(s, bx + bw / 2, cy, ok ? (cfg.okText || 'CHÍNH XÁC!') : (cfg.badText || 'CHƯA CHÍNH XÁC!'), 110, ok ? '#7ae09a' : '#ff7a7e', { sw: 10 }).setDepth(700); self.objs.push(res);
         res.setScale(0.3); s.tweens.add({ targets: res, scale: 1, duration: 260, ease: 'Back.easeOut' });
-        G.audio.sfx(ok ? 'correct' : 'wrong'); if (ok) G.burst(s, G.W / 2, 380, 'spark', 26, { speed: 520, life: 800, scale: 3, depth: 701 });
+        G.audio.sfx(ok ? 'correct' : 'wrong'); if (ok) G.burst(s, bx + bw / 2, cy, 'spark', 26, { speed: 520, life: 800, scale: 3, depth: 701 });
+        if (!ok) s.tweens.add({ targets: rows[sel], x: rows[sel].x + 14, duration: 50, yoyo: true, repeat: 3 });
+        if (ok && cfg.zoomCorrect) { // phương án sai tan thành hạt tuyết, đáp án đúng phóng to ra giữa
+          s.time.delayedCall(800, function () {
+            s.tweens.add({ targets: res, alpha: 0, duration: 300 }); q.setVisible(false); confirm.setVisible(false);
+            rows.forEach(function (r, k) { if (k !== sel) { G.burst(s, r.x, r.y, cfg.zoomParticle || 'snow', 18, { speed: 220, life: 900, scale: 5, depth: 700 }); s.tweens.add({ targets: r, alpha: 0, duration: 400 }); } else r.setVisible(false); });
+            const zw = bw - 120, zg = s.add.graphics().setDepth(702), zt = G.txt(s, bx + bw / 2, by + bh / 2 - 30, opts[sel], 54, '#ffffff', { wrap: zw - 80, sw: 5 }).setDepth(703);
+            let zf = 54; while (zt.height > bh - 300 && zf > 30) { zf -= 2; zt.setFontSize(zf); }
+            const zh = zt.height + 90; zg.fillStyle(0xffffff, 1); zg.fillRect(-zw / 2 - 6, -zh / 2 - 6, zw + 12, zh + 12); zg.fillStyle(0x1d7a36, 1); zg.fillRect(-zw / 2, -zh / 2, zw, zh); zg.setPosition(bx + bw / 2, by + bh / 2 - 30);
+            [zg, zt].forEach(function (o) { o.setScale(0.6); o.alpha = 0; s.tweens.add({ targets: o, scale: 1, alpha: 1, duration: 600, ease: 'Back.easeOut' }); });
+            self.objs.push(zg, zt);
+            const nb = G.button(s, bx + bw / 2, by + bh - 60, 480, 76, cfg.zoomBtn || 'TIẾP THEO', function () { nb.setEnabled(false); if (cfg.onResult) cfg.onResult(true); }, { color: 'green', blink: true, size: 42 }).setDepth(704); self.objs.push(nb);
+          });
+          return;
+        }
         s.time.delayedCall(ok ? 1100 : 950, function () { if (cfg.onResult) cfg.onResult(ok); });
       }, { color: 'gold', size: 40 }).setDepth(603);
       confirm.setEnabled(false); this.objs.push(confirm);
@@ -187,6 +201,14 @@
     refresh: function () { const st = G.state.data, self = this; this.slots.forEach(function (sl, i) { const has = !!st.treasures[i]; sl.has = has; sl.icon.setVisible(has); sl.num.setVisible(!has); if (has) { self.scene.tweens.add({ targets: sl.icon, scale: { from: 2.2, to: 2.45 }, duration: 700, yoyo: true, repeat: -1 }); } }); this.setHp(G.state.hp); },
     setHp: function (n, hurt) { this.hearts.forEach(function (h, i) { h.setTexture(i < n ? 'ic_heart' : 'ic_heart_g'); }); if (hurt && this.hearts[n]) { const h = this.hearts[n], sc = this.scene; sc.tweens.add({ targets: h, scale: { from: 11, to: 7 }, angle: { from: 25, to: 0 }, duration: 350, ease: 'Back.easeOut' }); } },
     slotPos: function (i) { return { x: this.slots[i].x, y: this.slots[i].y }; },
+    raise: function (d) { this.slots.forEach(function (sl) { sl.g.setDepth(d); sl.icon.setDepth(d + 1); sl.num.setDepth(d + 1); if (sl.zone) sl.zone.setDepth(d + 2); }); },
+    onSlot: function (cb) { const sc = this.scene; this.slots.forEach(function (sl, i) { sl.zone = sc.add.zone(sl.x, sl.y, 104, 104).setInteractive({ useHandCursor: true }).setDepth(453); sl.zone.on('pointerup', function () { cb(i); }); }); },
+    setUsed: function (i, used) { // Boss: bảo vật đã dùng → ô xám, biểu tượng biến mất
+      const sl = this.slots[i]; sl.used = used; this.scene.tweens.killTweensOf(sl.icon); sl.icon.setScale(2.2); sl.icon.setVisible(!used && sl.has); sl.g.clear();
+      sl.g.fillStyle(0x1b1030, 1); sl.g.fillCircle(sl.x, sl.y, 50); sl.g.fillStyle(used ? 0x6b6880 : 0xffd84a, 1); sl.g.fillCircle(sl.x, sl.y, 46); sl.g.fillStyle(used ? 0x3a3850 : 0x241848, 1); sl.g.fillCircle(sl.x, sl.y, 40);
+      if (!used && sl.has) this.scene.tweens.add({ targets: sl.icon, scale: { from: 2.2, to: 2.6 }, duration: 600, yoyo: true, repeat: -1 });
+    },
+    glowAll: function () { const sc = this.scene; this.slots.forEach(function (sl, i) { sc.time.delayedCall(i * 140, function () { G.burst(sc, sl.x, sl.y, 'spark', 16, { speed: 300, life: 700, scale: 3, depth: 460 }); sc.tweens.add({ targets: sl.icon, scale: 3.4, duration: 200, yoyo: true }); }); }); },
     setTreasure: function (i) { const sl = this.slots[i]; sl.has = true; sl.icon.setVisible(true); sl.num.setVisible(false); sl.icon.setScale(3.4); this.scene.tweens.add({ targets: sl.icon, scale: 2.2, duration: 400, ease: 'Back.easeOut' }); G.burst(this.scene, sl.x, sl.y, 'spark', 14, { speed: 260, life: 600, scale: 2, depth: 455 }); this.scene.tweens.add({ targets: sl.icon, scale: { from: 2.2, to: 2.45 }, duration: 700, yoyo: true, repeat: -1, delay: 450 }); },
   };
   // ---------- hạt (burst) tự viết, độc lập phiên bản Phaser ----------
@@ -214,7 +236,7 @@
   // ---------- hiệu ứng dịch chuyển (chùm sáng) ----------
   G.beam = function (scene, x, groundY, color, onDone) {
     G.audio.sfx('teleport'); const col = G.num(color || '#ffd84a');
-    const b = scene.add.rectangle(x, 0, 150, groundY, col, 0).setOrigin(0.5, 0).setDepth(300);
+    const b = scene.add.rectangle(x, 0, 150, groundY, col, 1).setAlpha(0).setOrigin(0.5, 0).setDepth(300);
     scene.tweens.add({ targets: b, alpha: 0.65, duration: 400 });
     for (let i = 0; i < 40; i++) { const p = scene.add.image(x + (Math.random() - 0.5) * 140, groundY + 10, 'spark').setTint(col).setScale(2.4).setDepth(301); scene.tweens.add({ targets: p, y: groundY - 300 - Math.random() * 200, alpha: 0, duration: 900 + Math.random() * 500, delay: Math.random() * 600, onComplete: function () { p.destroy(); } }); }
     scene.time.delayedCall(900, function () { scene.tweens.add({ targets: b, alpha: 0, duration: 400, onComplete: function () { b.destroy(); if (onDone) onDone(); } }); });
@@ -223,10 +245,10 @@
   G.ambient = function (scene, kind) {
     const W = G.W;
     if (kind === 'clouds') { for (let i = 0; i < 5; i++) { const c = scene.add.image(Math.random() * W, 60 + Math.random() * 280, 'cloud').setScale(4 + Math.random() * 3).setAlpha(0.9).setDepth(2); scene.tweens.add({ targets: c, x: W + 300, duration: 60000 + Math.random() * 40000, repeat: -1, onRepeat: function () { c.x = -300; } }); } return; }
-    const cfg = { leaves: ['leaf', 18, 5], flies: ['fly', 24, 2.5], drops: ['drop', 20, 3], dust: ['dust', 40, 3], embers: ['ember', 30, 3], pages: ['page', 8, 3] }[kind]; if (!cfg) return;
+    const cfg = { leaves: ['leaf', 18, 5], flies: ['fly', 24, 2.5], drops: ['drop', 20, 3], dust: ['dust', 40, 3], embers: ['ember', 30, 3], pages: ['page', 8, 3], snow: ['snow', 60, 4] }[kind]; if (!cfg) return;
     for (let i = 0; i < cfg[1]; i++) {
       const p = scene.add.image(Math.random() * W, Math.random() * 760, cfg[0]).setScale(cfg[2]).setDepth(5).setAlpha(0.8);
-      const falling = kind === 'leaves' || kind === 'drops' || kind === 'pages', rising = kind === 'embers';
+      const falling = kind === 'leaves' || kind === 'drops' || kind === 'pages' || kind === 'snow', rising = kind === 'embers';
       scene.tweens.add({ targets: p, y: falling ? 780 : (rising ? -20 : p.y + (Math.random() - 0.5) * 120), x: p.x + (Math.random() - 0.5) * 200, angle: falling ? 360 : 0, alpha: kind === 'flies' || kind === 'dust' ? { from: 0.2, to: 1 } : 0.8, duration: 4000 + Math.random() * 5000, yoyo: !falling && !rising, repeat: -1, delay: Math.random() * 3000, onRepeat: function () { if (falling) { p.y = -20; p.x = Math.random() * W; } if (rising) { p.y = 780; p.x = Math.random() * W; } } });
     }
   };

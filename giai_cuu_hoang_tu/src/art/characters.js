@@ -123,19 +123,20 @@
       G.M(c, m.map(function (r) { return r; }), { c: '#b8860b', R: '#e0183e', W: '#ff9bb0', Y: '#ffe36b' }, 6, 6);
       P(c, '#ffd84a', 12, 12, 3, 3); P(c, '#ffffff', 13, 12, 1, 1);
     },
-    function (c) { // La bàn
-      G.ellipse(c, '#b8860b', 14, 14, 12, 12); G.ellipse(c, '#ffd84a', 14, 14, 11, 11); G.ellipse(c, '#fff8e0', 14, 14, 9, 9);
-      [[14, 5], [14, 22], [5, 14], [22, 14]].forEach(function (p) { P(c, INK, p[0], p[1], 1, 1); });
-      for (let i = 0; i < 8; i++) { P(c, '#e0383e', 14 - Math.floor(i / 1.4) + (i > 5 ? 0 : 0), 14 - i, 1 + Math.floor(i / 3), 1); }
-      for (let i = 0; i < 8; i++) { P(c, '#4a5568', 14 + Math.floor(i / 3), 14 + i, 1 + Math.floor((7 - i) / 3), 1); }
-      P(c, '#ffd84a', 13, 13, 3, 3); P(c, '#ffffff', 5, 4, 2, 1);
+    function (c) { // La Bàn Suy Luận [SPEC]: vỏ vàng chạm khắc, mặt xanh tím có dấu hỏi + ngôi sao, kim mũi tên vàng, đá tím ở tâm
+      G.ellipse(c, '#b8860b', 14, 14, 12, 12); G.ellipse(c, '#ffd84a', 14, 14, 11, 11); P(c, '#b8860b', 13, 1, 3, 2);
+      [[14, 4], [14, 24], [4, 14], [24, 14], [7, 7], [21, 7], [7, 21], [21, 21]].forEach(function (p) { P(c, '#fff08a', p[0], p[1], 1, 1); });
+      G.ellipse(c, '#3a3a9a', 14, 14, 8, 8); G.ellipse(c, '#5a4ab8', 13, 13, 6, 6);
+      G.M(c, ['xx.', '..x', '.x.', '...', '.x.'], { x: '#c8d0ff' }, 7, 10); P(c, '#fff3c4', 19, 9, 1, 3); P(c, '#fff3c4', 18, 10, 3, 1);
+      for (let i = 0; i < 6; i++) P(c, '#ffd84a', 14 + Math.floor(i / 2), 13 - i, 1, 1); P(c, '#fff08a', 16, 7, 2, 2);
+      for (let i = 0; i < 5; i++) P(c, '#b8860b', 13 - Math.floor(i / 2), 15 + i, 1, 1);
+      G.ellipse(c, '#9b59ff', 14, 14, 2, 2); P(c, '#e0c8ff', 13, 13, 1, 1);
     },
-    function (c) { // Vương miện
-      P(c, '#ffd84a', 4, 14, 20, 9); P(c, '#b8860b', 4, 21, 20, 2);
-      [4, 10, 16, 22].forEach(function (x) { P(c, '#ffd84a', x, 6, 3, 9); });
-      P(c, '#ffd84a', 12, 3, 4, 12); [5, 13, 23].forEach(function (x, i) { P(c, ['#e0383e', '#4aa3ff', '#3fbf5f'][i], x - (i === 2 ? 1 : 0), 4 + (i === 1 ? -1 : 2), 2, 2); });
-      G.ellipse(c, '#e0383e', 8, 18, 2, 2); G.ellipse(c, '#4aa3ff', 14, 18, 2, 2); G.ellipse(c, '#3fbf5f', 20, 18, 2, 2);
-      P(c, '#fff3c4', 5, 15, 2, 1);
+    function (c) { // Quyền Trượng Thông Tuệ [SPEC]: thân vàng kim, đầu ngôi sao sáu cánh / tinh thể băng, đá xanh băng ở giữa
+      for (let i = 0; i < 16; i++) P(c, i % 4 === 0 ? '#b8860b' : '#ffd84a', 13, 12 + i, 3, 1); P(c, '#fff08a', 13, 12, 1, 15); P(c, '#b8860b', 11, 26, 7, 2);
+      const cx = 14, cy = 8; [[0, -7], [0, 7], [-6, -4], [6, -4], [-6, 4], [6, 4]].forEach(function (d) { for (let k = 0; k <= 6; k++) { P(c, '#bfefff', Math.round(cx + d[0] * k / 6), Math.round(cy + d[1] * k / 6), 2, 2); } });
+      G.ellipse(c, '#ffd84a', cx, cy, 4, 4); G.ellipse(c, '#4ad8ff', cx, cy, 3, 3); P(c, '#e8ffff', cx - 1, cy - 2, 2, 2);
+      [[3, 3], [24, 5], [4, 16], [23, 18]].forEach(function (p) { P(c, '#ffffff', p[0], p[1], 1, 1); });
     },
   ];
 
