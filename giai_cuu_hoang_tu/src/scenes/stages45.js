@@ -70,12 +70,13 @@
         if (d.kind === 'options') {
           const opts = d.options || [];
           if (opts.length < 2) { // [PLACEHOLDER] chưa đủ phương án: trình bày nội dung đúng + cảnh báo
-            const sl = opts.map(function (o) { return o.slide || { title: o.label, body: o.text || '' }; });
+            const sl = opts.map(function (o, i) { return o.slide || { title: 'PHƯƠNG ÁN ' + L4[i], body: o.text || o.label }; });
             sl.push(warnSlide('CHƯA CẤU HÌNH ĐỦ PHƯƠNG ÁN', 'Cửa này cần ít nhất 2 phương án để người chơi lựa chọn.\nNgười tạo game cần điền thêm phương án vào content/content.js (stage4.doors[' + k + '].options).\n\nBấm nút bên dưới để bỏ qua và mở cửa.'));
             ctx.slides.show({ slides: sl, heading: d.name, doneLabel: 'BỎ QUA & MỞ CỬA', color: '#5a4ab0', onDone: onRight }); return;
           }
           const pick = function () { ctx.quiz.show({ title: d.name, q: d.q, options: opts.map(function (o) { return o.label; }), answer: d.answer, okText: ok, badText: bad, onResult: function (r) { ctx.quiz.hide(); if (r) onRight(); else retryOr(pick); } }); };
-          ctx.slides.show({ slides: opts.map(function (o, i) { return Object.assign({}, o.slide || { title: o.label, body: o.text || '' }, { tag: 'PHƯƠNG ÁN ' + L4[i] }); }), heading: d.name, doneLabel: 'CHỌN ĐÁP ÁN', color: '#5a4ab0', onDone: pick });
+          // một slide chứa đủ các phương án dạng thẻ A–D (như slide CÂU 5-2 trong case study), rồi mới hiện bảng chọn đáp án
+          ctx.slides.show({ slides: [{ tag: 'CÂU 5-2', title: d.cardTitle || d.name.split('–').pop().trim(), lead: 'Chọn đáp án đúng', blocks: [{ type: 'cards', items: opts.map(function (o, i) { return { head: L4[i], body: o.label }; }) }] }], heading: d.name, doneLabel: 'CHỌN ĐÁP ÁN', color: '#5a4ab0', onDone: pick });
         } else {
           const lists = d.lists || [], full = lists.filter(function (l) { return l && l.length; }).length;
           if (full < 3) {
@@ -107,7 +108,8 @@
                     } else doDoor(k + 1);
                   });
                 };
-                if (d.explain && d.explain.length) ctx.slides.show({ slides: d.explain, doneLabel: 'TIẾP TỤC', color: '#5a4ab0', onDone: next }); else next();
+                const expl = d.explain || (d.options && d.options[d.answer] && d.options[d.answer].slide ? [d.options[d.answer].slide] : null);
+                if (expl && expl.length) ctx.slides.show({ slides: expl, doneLabel: 'TIẾP TỤC', color: '#5a4ab0', onDone: next }); else next();
               });
             });
           }, npc);

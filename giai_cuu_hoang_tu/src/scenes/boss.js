@@ -38,7 +38,7 @@
       total = 2500;
     } else if (id === 'minhhien') {
       const pv = G.txt(s, pl.x + 30, pl.y - 280, 'p < 0.05', 80, '#9be8a6', { sw: 10 }).setDepth(60); s.tweens.add({ targets: pv, scale: { from: 0.5, to: 1.4 }, duration: 500, yoyo: true, hold: 200 }); s.tweens.add({ targets: pv, alpha: 0, delay: 1000, duration: 400, onComplete: function () { pv.destroy(); } });
-      for (let i = 0; i < 12; i++) { const n = G.txt(s, 0, 0, ['0.05', '1.96', 'σ', 'β', 'χ²', 'r', 'F', 't', '95%', 'μ', 'α', 'n'][i], 56, '#ffffff', { sw: 6 }).setDepth(50); fly(s, n, x0, y0, x1 + (i % 4) * 14, y1 + (i % 3) * 30 - 30, 520, 90, 300 + i * 90, function () { once(); n.destroy(); }); }
+      for (let i = 0; i < 12; i++) { const n = G.txt(s, 0, 0, ['0.05', '1.96', 'σ', 'β', 'χ²', 'r', 'F', 't', '95%', 'μ', 'α', 'n'][i], 56, '#ffffff', { sw: 6 }).setDepth(50); fly(s, n, x0, y0, x1 + (i % 4) * 14, y1 + (i % 3) * 30 - 30, 420, 90, 300 + i * 70, function () { once(); n.destroy(); }); }
       const ch = s.add.container(0, 0).setDepth(52); [[0, 50], [24, 90], [48, 70], [72, 130]].forEach(function (b) { ch.add(s.add.rectangle(b[0] - 40, 60 - b[1] / 2, 18, b[1], 0xffd84a).setStrokeStyle(4, 0x1b1030)); });
       fly(s, ch, x0, y0, x1, y1, 650, 100, 1500, function () { once(); G.burst(s, x1, y1, 'spark', 30, { speed: 520, life: 800, scale: 4 }); ch.destroy(); }); ch.setScale(1.6);
       s.tweens.add({ targets: ch, scale: 3.2, duration: 650, delay: 1500 }); total = 2800;
@@ -112,7 +112,7 @@
           } else counter();
         } });
       }
-      // ---- Rồng phản công bằng 40 bài Journal ----
+      // ---- Rồng phản công bằng 20 bài Journal ----
       function counter() {
         dragon.talk(true); dragon.setTint(0xff6060); G.audio.sfx('roar'); s.cameras.main.shake(300, 0.006);
         s.tweens.add({ targets: dragon, y: dragon.y - 30, duration: 300, yoyo: true });

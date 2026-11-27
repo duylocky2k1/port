@@ -47,12 +47,11 @@ window.GAME_CONTENT = {
     heading: 'SẮC LỆNH HOÀNG GIA', sub: 'NHIỆM VỤ GIẢI CỨU HOÀNG TỬ',
     paragraphs: [
       'SẮC LỆNH KHẨN CẤP TỪ HOÀNG GIA CAMPUCHIA',
-      'Trong một chuyến vi hành bí mật, Hoàng tử Campuchia không may bị bắt cóc bởi RỒNG GIÁO SƯ – một con rồng đáng sợ, sở hữu kho tàng kiến thức khoa học khổng lồ.',
-      'Tên rồng độc ác đã giam giữ Hoàng tử trong TỔ TRI THỨC, nơi chất đầy những cuốn sách và bài nghiên cứu khoa học.',
-      'Mỗi ngày, Hoàng tử bị ép phải đọc 20 BÀI JOURNAL, phân tích từng mô hình nghiên cứu và ghi nhớ vô số lý thuyết phức tạp.',
+      'Trong một chuyến vi hành bí mật, Hoàng tử Campuchia không may bị bắt cóc bởi RỒNG GIÁO SƯ – một con rồng thông tuệ, sở hữu kho tàng kiến thức khoa học khổng lồ.',
+      'Mỗi ngày, Hoàng tử phải đọc 20 BÀI JOURNAL, phân tích từng mô hình nghiên cứu và ghi nhớ vô số lý thuyết phức tạp.',
       'Sau nhiều ngày bị nhấn chìm trong biển kiến thức, Hoàng tử dần kiệt sức, đôi mắt thâm quầng và tinh thần đứng bên bờ vực sụp đổ.',
       'Hoàng gia Campuchia chính thức ban hành sắc lệnh: "CHIÊU MỘ NHỮNG CHIẾN BINH DŨNG CẢM NHẤT!"',
-      'Bất kỳ chiến binh nào vượt qua những thử thách tri thức, đánh bại Rồng Giáo Sư và giải cứu Hoàng tử thành công sẽ nhận được phần thưởng bí mật cùng lời cảm tạ cao quý từ Hoàng gia Campuchia!',
+      'Bất kỳ chiến binh nào vượt qua những thử thách tri thức, chiến thắng Rồng Giáo Sư và giải cứu Hoàng tử thành công sẽ nhận được phần thưởng bí mật cùng lời cảm tạ cao quý từ Hoàng gia Campuchia!',
       'HỠI CHIẾN BINH, BẠN ĐÃ SẴN SÀNG LÊN ĐƯỜNG?',
     ],
     button: 'SẴN SÀNG!',
@@ -82,7 +81,7 @@ window.GAME_CONTENT = {
     npc: 'CÂY THÔNG THÁI',
     greeting: [
       'Ồ! Cuối cùng cũng có một chiến binh dũng cảm đặt chân đến Rừng Thông Thái!',
-      'Ta đã chờ đợi rất lâu để tìm ra người có đủ trí tuệ giải cứu Hoàng tử Campuchia khỏi nanh vuốt của Rồng Giáo Sư.',
+      'Ta đã chờ đợi rất lâu để tìm ra người có đủ trí tuệ giải cứu Hoàng tử Campuchia.',
       'Nhưng trước khi tiếp tục cuộc hành trình, ngươi phải chứng minh rằng mình xứng đáng!',
       'Để vượt qua khu rừng này, ngươi cần lắng nghe câu chuyện mà ta sắp kể và trả lời chính xác câu hỏi của ta.',
     ],
@@ -294,10 +293,13 @@ window.GAME_CONTENT = {
     okText: 'CHÍNH XÁC!', badText: 'HÃY SUY NGHĨ LẠI!',
     // Mỗi cửa chỉ có MỘT đáp án đúng (answer = chỉ số, bắt đầu từ 0). Nhớ đổi vị trí đáp án đúng khi đã điền đủ phương án.
     doors: [
-      { name: 'CỬA 1 – BÍ MẬT TRÒ CHƠI HAY', symbol: 'star', kind: 'options',
+      { name: 'CỬA 1 – BÍ MẬT TRÒ CHƠI HAY', cardTitle: 'THẾ NÀO LÀ GAME “HAY”?', symbol: 'star', kind: 'options',
         q: 'Điều gì tạo nên một trò chơi ‘hay’?',
         options: [
-          { label: 'Năm yếu tố làm nên một trò chơi hiệu quả trong tiếp thị', // [SPEC] slide "THẾ NÀO LÀ GAME HAY?"
+          { label: 'MONEY TALKS' },
+          { label: 'CHỊ THẮNG RỒI NHƯNG EM KHÔNG BAO GIỜ THUA' },
+          { label: 'THỎA MÃN NHU CẦU TÂM LÝ CƠ BẢN\nCƠ CHẾ GAME THỰC THỤ\nKẾT HỢP HAI ĐỘNG CƠ\nGẮN VỚI BRAND\nHIỆU ỨNG IKEA', // [SPEC] thẻ C trong slide CÂU 5-2 (trang 15 PDF); slide giải thích 5 yếu tố ở dưới — đáp án C
+
             slide: { tag: 'CÂU 5-2', title: 'THẾ NÀO LÀ GAME “HAY”?', lead: 'Năm yếu tố làm nên một trò chơi hiệu quả trong tiếp thị.',
               blocks: [{ type: 'cards', align: 'center', headColor: '#ff9fce', items: [
                 { head: '01', title: 'THỎA MÃN NHU CẦU TÂM LÝ CƠ BẢN', body: 'Sự tự chủ\nĐáp ứng nhu cầu thành tựu\nSự gắn kết' },
@@ -305,32 +307,39 @@ window.GAME_CONTENT = {
                 { head: '03', title: 'KẾT HỢP HAI ĐỘNG CƠ', body: 'Bên trong: giải trí, cảm xúc, niềm vui thử thách\nBên ngoài: quà tặng, ưu đãi, điểm thưởng' },
                 { head: '04', title: 'GẮN VỚI BRAND', body: 'Trò chơi phải hỗ trợ mục tiêu marketing của thương hiệu' },
                 { head: '05', title: 'HIỆU ỨNG IKEA', body: 'Tạo nhân vật hoặc phần quà được cá nhân hóa — người chơi tự tay làm nên thì càng trân trọng' }] }] } },
-          // [PLACEHOLDER] thêm các phương án sai: { label:'...', slide:{ title:'...', body:'...' } }
+          { label: 'DỪNG SHARE ĐI!!!' },
         ],
-        answer: 0 },
-      { name: 'CỬA 2 – QUY TẮC VÀNG', symbol: 'check', kind: 'lists',
+        answer: 2 },
+      { name: 'CỬA 2 – QUY TẮC VÀNG', cardTitle: 'NÊN LÀM GÌ ĐỂ GAME HIỆU QUẢ?', symbol: 'check', kind: 'options',
         q: 'Hãy lập danh sách những điều nên làm để trò chơi hóa trong tiếp thị đạt hiệu quả.',
-        lists: [
-          [ // [SPEC] slide "NÊN LÀM" – DO's
-            'Xác định mục tiêu marketing trước khi thiết kế trò chơi', 'Tạo sự liên quan giữa trò chơi và sản phẩm',
-            'Đặt luật chơi rõ ràng: cách tham gia, tính điểm, điều kiện thưởng, thời hạn', 'Tạo thử thách vừa sức — đủ thú vị nhưng không gây bỏ cuộc',
-            'Đơn giản hóa thao tác, nhất là tại cửa hàng hoặc trên mobile', 'Cho người chơi cảm giác chủ động: chọn thử thách, cách chơi, phần thưởng',
-            'Thể hiện tiến trình và sự ghi nhận: điểm, cấp độ, phản hồi tức thì', 'Dùng phần thưởng phù hợp với nhóm người chơi và mức độ tham gia',
-            'Tạo cơ hội tương tác xã hội: bình chọn, chia sẻ, mời bạn bè', 'Đo cả mức độ tham gia lẫn kết quả marketing, không chỉ đếm lượt chơi'],
-          [], // [PLACEHOLDER] danh sách sai thứ nhất
-          [], // [PLACEHOLDER] danh sách sai thứ hai
+        options: [
+          { label: 'NÃY CHỊ ĐANG LÀM KHÁCH EM NHÌN GÌ CHỊ ĐÓ MAI' },
+          { label: 'HÔM NAY ĐÔNG ĐỦ CẢ NHỈ?' },
+          { label: 'EM KHÔNG CÓ ƯỚC MƠ HẢ?' },
+          { label: 'XÁC ĐỊNH MỤC TIÊU TIẾP THỊ\nĐẶT LUẬT CHƠI RÕ RÀNG\nDÙNG PHẦN THƯỞNG PHÙ HỢP' }, // [SPEC] đáp án D (bản 3)
         ],
-        answer: 0 },
-      { name: 'CỬA 3 – CẠM BẪY TRÒ CHƠI HÓA', symbol: 'warn', kind: 'lists',
+        answer: 3,
+        // [SPEC] slide "NÊN LÀM" – hiện sau khi trả lời đúng
+        explain: [{ tag: 'CÂU 5-2', title: 'NÊN LÀM', lead: 'DO’s — 10 nguyên tắc để trò chơi hóa đạt hiệu quả', blocks: [
+          { type: 'list', cols: 2, h: 2.4, items: [            { t: 'Xác định mục tiêu marketing trước khi thiết kế trò chơi' },
+            { t: 'Tạo sự liên quan giữa trò chơi và sản phẩm' },
+            { t: 'Đặt luật chơi rõ ràng: cách tham gia, tính điểm, điều kiện thưởng, thời hạn' },
+            { t: 'Tạo thử thách vừa sức — đủ thú vị nhưng không gây bỏ cuộc' },
+            { t: 'Đơn giản hóa thao tác, nhất là tại cửa hàng hoặc trên mobile' },
+            { t: 'Cho người chơi cảm giác chủ động: chọn thử thách, cách chơi, phần thưởng' },
+            { t: 'Thể hiện tiến trình và sự ghi nhận: điểm, cấp độ, phản hồi tức thì' },
+            { t: 'Dùng phần thưởng phù hợp với nhóm người chơi và mức độ tham gia' },
+            { t: 'Tạo cơ hội tương tác xã hội: bình chọn, chia sẻ, mời bạn bè' },
+            { t: 'Đo cả mức độ tham gia lẫn kết quả marketing, không chỉ đếm lượt chơi' }] }] }] },
+      { name: 'CỬA 3 – CẠM BẪY TRÒ CHƠI HÓA', cardTitle: 'CẦN TRÁNH LÀM GÌ ĐỂ GAME HIỆU QUẢ?', symbol: 'warn', kind: 'options',
         q: 'Hãy lập danh sách những điều cần tránh để trò chơi hóa trong tiếp thị đạt hiệu quả.',
-        lists: [
-          [ // [SPEC] slide "CẦN TRÁNH" – DON'Ts
-            'Một trò chơi cho mọi nhóm nhân khẩu học', 'Biến trò chơi thành một quảng cáo kéo dài', 'Thiết kế chỉ để thúc đẩy mua nhiều hơn',
-            'Luật chơi phức tạp hoặc thiếu minh bạch', 'Quá dễ hoặc quá khó', 'Phần thưởng không thực tế', 'Thu thập dữ liệu thiếu minh bạch'],
-          [], // [PLACEHOLDER]
-          [], // [PLACEHOLDER]
+        options: [
+          { label: 'EM CÀNG NÓI EM CÀNG SAI!' },
+          { label: 'KHÔNG LÀM 1 TRÒ CHƠI ÁP DỤNG CHO TẤT CẢ\nKHÔNG BIẾN TRÒ CHƠI THÀNH MỘT QUẢNG CÁO KÉO DÀI\nKHÔNG THU THẬP DỮ LIỆU THIẾU MINH BẠCH' }, // [SPEC] đáp án B (bản 3)
+          { label: 'BÔNG ĐẸP QUÁ KÌA' },
+          { label: 'CHỊ LÀ MỘT NGƯỜI AN TOÀN' },
         ],
-        answer: 0,
+        answer: 1,
         // [SPEC] slide "CẦN TRÁNH" – hiện sau khi trả lời đúng
         explain: [{ tag: 'CÂU 5-2', title: 'CẦN TRÁNH', lead: 'DON’Ts - 7 lỗi thường gặp khi làm gamification', blocks: [
           { type: 'list', cols: 2, h: 2.4, items: [
@@ -456,16 +465,16 @@ window.GAME_CONTENT = {
       'Không ngờ lại có một chiến binh đủ khả năng vượt qua tất cả những thử thách mà ta đã đặt ra!',
       'Nhưng đừng vội mừng! Muốn giải cứu Hoàng tử Campuchia, ngươi còn phải vượt qua thử thách cuối cùng của ta!',
       'Ta sẽ đưa ra 5 CÂU HỎI TRI THỨC!',
-      'Nếu trả lời chính xác tất cả, ta sẽ thừa nhận thất bại và trả tự do cho Hoàng tử!',
+      'Nếu trả lời chính xác tất cả, ta sẽ trả tự do cho Hoàng tử!',
       'NHƯNG NẾU NGƯƠI THẤT BẠI...',
-      'Ngươi sẽ bị nhốt cùng Hoàng tử Campuchia và phải đọc 40 BÀI JOURNAL KHÁC NHAU MỖI NGÀY, CHO ĐẾN HẾT ĐỜI!',
+      'Ngươi sẽ bị nhốt cùng Hoàng tử Campuchia và phải đọc 20 BÀI JOURNAL KHÁC NHAU MỖI NGÀY, CHO ĐẾN HẾT ĐỜI!',
       'HAHAHAHA!',
     ],
     battleTitle: 'FINAL BOSS BATTLE!', battleSub: '5 THỬ THÁCH TRI THỨC – 1 CƠ HỘI GIẢI CỨU HOÀNG TỬ!', battleBtn: 'BẮT ĐẦU CHIẾN ĐẤU',
     quizTitle: 'THỬ THÁCH TRI THỨC – CÂU',
     okText: 'CHÍNH XÁC!', badText: 'SAI RỒI!',
     hitToast: 'CHÍNH XÁC! SỨC MẠNH TRI THỨC ĐÃ GÂY SÁT THƯƠNG!',
-    missToast: 'SAI RỒI! NGƯƠI ĐÃ BỊ TẤN CÔNG BỞI 40 BÀI JOURNAL!',
+    missToast: 'SAI RỒI! NGƯƠI ĐÃ BỊ TẤN CÔNG BỞI 20 BÀI JOURNAL!',
     retryBtn: 'THỬ LẠI',
     hintBtn: 'ĐÃ HIỂU',
     // hints: 5 gợi ý theo thứ tự 5 bảo vật (Áo giáp, Sách, Trái tim, La bàn, Quyền trượng) – [ĐỀ XUẤT], nhóm duyệt lại
@@ -487,8 +496,8 @@ window.GAME_CONTENT = {
           'Âm thanh, hình ảnh hay giải thưởng lớn thì quảng cáo cũng có thể có. Điểm khác biệt nằm ở tâm lý người chơi.',
           'Hãy loại phương án A và D trước: hình ảnh sinh động hay giải thưởng lớn không làm não bộ xử lý khác đi.',
           'Từ khóa: TỰ CHỌN tham gia + phần thưởng là THÀNH TỰU.'] },
-      { q: 'Samsung cho người dùng đổi huy hiệu (nhận được khi xem video, viết đánh giá, tham gia hỏi đáp) lấy lượt bốc thăm trúng sản phẩm. Riêng cơ chế "đổi huy hiệu lấy lượt bốc thăm" này minh họa rõ nhất lý thuyết nào?', // [ĐỀ XUẤT] sửa câu chữ để không mâu thuẫn với câu hỏi Chặng 2
-        options: ['Thuyết kỳ vọng (Expectancy Theory) — người tiêu dùng có động lực khi kỳ vọng hành động của mình mang lại một kết quả họ coi trọng',
+      { q: 'Samsung tặng huy hiệu khi người dùng xem video, viết đánh giá, tham gia hỏi đáp; huy hiệu đổi thành lượt bốc thăm sản phẩm. Cơ chế này minh họa rõ nhất lý thuyết nào?', // cập nhật theo bản docx (Câu 3/5)
+        options: ['Thuyết kỳ vọng (Expectancy Theory)',
           'Nhu cầu thuộc về (Need to belong)', 'Tư duy khởi đầu mới (Fresh start mindset)', 'Nhu cầu khác biệt (Need for uniqueness)'], answer: 0,
         hints: ['Hãy tập trung vào phần "đổi huy hiệu lấy lượt bốc thăm": người dùng cố gắng vì điều gì?',
           'Slide "Lý thuyết áp dụng": lý thuyết nào gắn hành vi muốn khuyến khích với một lợi ích mà người chơi coi trọng?',
@@ -518,13 +527,12 @@ window.GAME_CONTENT = {
       minhhien: ['p < 0.05!', 'Bác bỏ H₀!'], // [ĐỀ XUẤT] chờ nhóm duyệt
       hoangthien: ['Ộp ộp!', 'Ếch bay!'] }, // [ĐỀ XUẤT] chờ nhóm duyệt
     journalWords: ['DOI', 'ABSTRACT', 'LITERATURE REVIEW', 'ZHANG ET AL.'],
-    gameOver: ['HAHAHA! TRI THỨC CỦA NGƯƠI VẪN CHƯA ĐỦ ĐỂ ĐÁNH BẠI TA!', 'GIỜ THÌ HÃY CHUẨN BỊ ĐỌC 40 BÀI JOURNAL MỖI NGÀY ĐI!'],
+    gameOver: ['HAHAHA! TRI THỨC CỦA NGƯƠI VẪN CHƯA ĐỦ ĐỂ CHIẾN THẮNG TA!', 'GIỜ THÌ HÃY CHUẨN BỊ ĐỌC 20 BÀI JOURNAL MỖI NGÀY ĐI!'],
     gameOverBtn: 'THỬ THÁCH LẠI!',
-    defeatTitle: 'BẠN ĐÃ ĐÁNH BẠI RỒNG GIÁO SƯ!',
+    defeatTitle: 'BẠN ĐÃ CHIẾN THẮNG!',
     defeat: [
       'KHÔNG THỂ TIN ĐƯỢC! NGƯƠI ĐÃ VƯỢT QUA CẢ 5 THỬ THÁCH TRI THỨC CỦA TA!',
       'Ta chưa từng nghĩ rằng có một chiến binh vừa dũng cảm, vừa sáng tạo, lại sở hữu trí tuệ đáng nể đến vậy!',
-      'Ta thừa nhận thất bại!',
       'Ngươi hoàn toàn xứng đáng giải cứu Hoàng tử Campuchia!',
       'Nhưng hãy nhớ kỹ một điều...',
       'Tri thức không chỉ để vượt qua thử thách hay đánh bại kẻ thù.',
@@ -533,7 +541,7 @@ window.GAME_CONTENT = {
     princeName: 'HOÀNG TỬ CAMPUCHIA',
     prince: [
       'Cuối cùng ta cũng được tự do!',
-      'Cảm ơn chiến binh dũng cảm đã giải cứu ta khỏi 40 bài Journal mỗi ngày!', // [SỬA] docx ghi 20, đổi thành 40 theo yêu cầu. Lưu ý: Sắc lệnh (decree) vẫn ghi 20
+      'Cảm ơn chiến binh dũng cảm đã giải cứu ta khỏi 20 bài Journal mỗi ngày!',
       'Ta sẽ không bao giờ quên lòng dũng cảm và trí tuệ của ngươi!',
       'Hãy cùng ta về đất nước Campuchia, ta sẽ hậu tạ ngươi chu đáo',
     ],

@@ -90,11 +90,14 @@
       const tag = G.panel(s, bx + 40, by - 36, tagW, 64, { fill: '#7a1d1d', border: C.gold, b: 6 }).setDepth(501);
       const nm = G.txt(s, bx + 40 + tagW / 2, by - 4, name, 38, C.cream).setDepth(502);
       const txt = G.txt(s, bx + 60, by + 44, '', 48, C.cream, { ox: 0, oy: 0, align: 'left', wrap: bw - 120, sw: 4 }).setDepth(502);
-      const btn = G.button(s, bx + bw - 190, by + bh - 46, 280, 64, 'TIẾP TỤC ▶'.replace('▶', ''), function () { adv(); }, { color: 'green', blink: true, size: 38 }).setDepth(503);
+      const btn = G.button(s, bx + bw - 190, by + bh - 46, 280, 64, 'TIẾP TỤC', function () { adv(); }, { color: 'green', blink: true, size: 38 }).setDepth(503);
+      // nút TRỞ LẠI đối xứng bên trái: quay về câu trước; các phần còn lại của ô vẫn bấm để tiếp tục
+      const back = G.button(s, bx + 190, by + bh - 46, 280, 64, 'TRỞ LẠI', function () { goBack(); }, { color: 'blue', size: 38 }).setDepth(503);
       const zone = s.add.zone(bx, by, bw, bh).setOrigin(0).setInteractive().setDepth(499);
-      this.objs = [panel, tag, nm, txt, btn, zone];
-      function show() { btn.setEnabled(false); if (npc && npc.talk) npc.talk(true); tw = G.typewrite(s, txt, lines[idx], 48, function () { if (npc && npc.talk) npc.talk(false); btn.setEnabled(true); }); }
+      this.objs = [panel, tag, nm, txt, btn, back, zone];
+      function show() { btn.setEnabled(false); back.setEnabled(idx > 0); if (npc && npc.talk) npc.talk(true); tw = G.typewrite(s, txt, lines[idx], 48, function () { if (npc && npc.talk) npc.talk(false); btn.setEnabled(true); }); }
       function adv() { if (!tw) return; if (!tw.done) { tw.skip(); return; } idx++; if (idx >= lines.length) { self.hide(); if (npc && npc.talk) npc.talk(false); if (onDone) onDone(); } else show(); }
+      function goBack() { if (!tw || idx === 0) return; tw.stop(); if (npc && npc.talk) npc.talk(false); idx--; show(); }
       zone.on('pointerup', adv);
       this.keyFn = function (e) { if (e.code === 'Space' || e.code === 'Enter') adv(); }; s.input.keyboard.on('keydown', this.keyFn);
       this.tw = function () { return tw; };
@@ -147,13 +150,14 @@
       const q = G.txt(s, bx + 60, by + 96, cfg.q, 42, '#ffffff', { ox: 0, oy: 0, align: 'left', wrap: bw - 120 }).setDepth(602);
       let fs = 42; while (q.height > 150 && fs > 26) { fs -= 2; q.setFontSize(fs); }
       this.objs = [dim, panel, head, q];
-      const opts = cfg.options, rows = []; let sel = -1, locked = false, y = by + 96 + Math.max(q.height, 60) + 24;
+      const opts = cfg.options, rows = [], optTexts = [], fits = []; let sel = -1, locked = false, y = by + 96 + Math.max(q.height, 60) + 24;
       const letters = ['A', 'B', 'C', 'D', 'E'];
       const avail = bh - (y - by) - 100, perRow = Math.min(cfg.rowMax || 100, Math.floor(avail / opts.length) - 10);
       opts.forEach(function (o, i) {
         const row = s.add.container(bx + bw / 2, y + perRow / 2), g = s.add.graphics();
         const t = G.txt(s, -bw / 2 + 120, 0, o, perRow < 80 ? 32 : 40, '#ffffff', { ox: 0, wrap: bw - 260, align: 'left', sw: 3 });
-        while (t.height > perRow - 10 && t.style.fontSize !== '22px') { t.setFontSize(parseInt(t.style.fontSize) - 2); if (parseInt(t.style.fontSize) <= 22) break; }
+        while (t.height > perRow - 10 && parseInt(t.style.fontSize, 10) > 22) t.setFontSize(parseInt(t.style.fontSize, 10) - 2);
+        optTexts.push(t); fits.push(parseInt(t.style.fontSize, 10));
         const L = G.txt(s, -bw / 2 + 74, 0, letters[i], 46, C.gold);
         row.add([g, L, t]); row.setSize(bw - 100, perRow).setDepth(603);
         function paint(state) { // normal | sel | ok | bad
@@ -166,6 +170,10 @@
         row.on('pointerup', function () { if (locked) return; sel = i; rows.forEach(function (r, k) { r.paint(k === i ? 'sel' : 'normal'); }); confirm.setEnabled(true); G.audio.sfx('select'); });
         self.objs.push(row); y += perRow + 10;
       });
+      // câu hỏi và các đáp án dùng chung một cỡ chữ (cỡ nhỏ nhất trong số các phần đã vừa khung)
+      const common = Math.min(parseInt(q.style.fontSize, 10), ...fits);
+      optTexts.forEach(function (t) { t.setFontSize(common); });
+      q.setFontSize(common);
       const confirm = G.button(s, bx + bw / 2, by + bh - 50, 520, 72, 'XÁC NHẬN ĐÁP ÁN', function () {
         if (sel < 0 || locked) return; locked = true; confirm.setEnabled(false); const ok = sel === cfg.answer;
         rows[sel].paint(ok ? 'ok' : 'bad'); if (!ok && cfg.answer >= 0 && cfg.reveal) rows[cfg.answer].paint('ok');
