@@ -120,8 +120,10 @@
     },
     function (c) { // Trái tim dũng cảm
       const m = ['..ccc...ccc..', '.cRRRc.cRRRc.', 'cRWRRRcRRRRRc', 'cRWRRRRRRRRRc', 'cRRRRRRRRRRRc', '.cRRRRRRRRRc.', '..cRRRYRRRc..', '...cRRYYRc...', '....cRRRc....', '.....cRc.....', '......c......'];
-      G.M(c, m.map(function (r) { return r; }), { c: '#b8860b', R: '#e0183e', W: '#ff9bb0', Y: '#ffe36b' }, 6, 6);
-      P(c, '#ffd84a', 12, 12, 3, 3); P(c, '#ffffff', 13, 12, 1, 1);
+      // phóng to lưới 2 lần (26x22 px) và căn giữa ô 28x28, để trái tim to và cân đối với các bảo vật khác
+      const col = { c: '#b8860b', R: '#e0183e', W: '#ff9bb0', Y: '#ffe36b' };
+      m.forEach(function (row, r) { for (let k = 0; k < row.length; k++) { if (row[k] !== '.') P(c, col[row[k]], 1 + k * 2, 3 + r * 2, 2, 2); } });
+      P(c, '#ffd84a', 9, 9, 4, 4); P(c, '#ffffff', 10, 9, 2, 2);
     },
     function (c) { // La Bàn Suy Luận [SPEC]: vỏ vàng chạm khắc, mặt xanh tím có dấu hỏi + ngôi sao, kim mũi tên vàng, đá tím ở tâm
       G.ellipse(c, '#b8860b', 14, 14, 12, 12); G.ellipse(c, '#ffd84a', 14, 14, 11, 11); P(c, '#b8860b', 13, 1, 3, 2);

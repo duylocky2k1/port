@@ -44,7 +44,8 @@ lists: [ [ /* danh sách đúng */ ], ['Ý 1', 'Ý 2'], ['Ý 1', 'Ý 2'] ], answ
 - `victory.reward`: phần thưởng bí mật (để trống thì không hiện).
 
 ## Viết slide
-Bài học, phần trình bày và phần giải thích là mảng **slide**; game tự vẽ theo giao diện pixel, không cần ảnh.
+Bài học, phần trình bày và phần giải thích là mảng **slide**; game tự vẽ theo giao diện pixel.
+Thẻ `cards` có thể kèm ảnh ở đáy (`img: '<tên>'`), ảnh khai báo dạng data URI trong `content/slide-images.js`.
 
 ```js
 // đơn giản nhất

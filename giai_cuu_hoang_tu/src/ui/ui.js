@@ -4,12 +4,21 @@
   // ---------- chữ ----------
   G.txt = function (scene, x, y, str, size, color, o) {
     o = o || {};
+    // chữ có dấu tiếng Việt: viền đen dày sẽ che các dấu nhỏ của font pixel, nên chỉ giữ viền mỏng (G.MARK_SW)
+    let sw = o.sw === undefined ? Math.max(2, Math.round(size / 12)) : o.sw, pad = 0;
+    const marked = /[\u00C0-\u024F\u1E00-\u1EFF]/.test(str);
+    if (G.MARK_SW !== undefined && marked) sw = Math.min(sw, G.MARK_SW);
+    // dấu nằm trên đầu chữ hoa có thể bị Phaser cắt khỏi canvas -> chừa thêm khoảng đệm trên/dưới (đối xứng nên vị trí không đổi)
+    // chuỗi rỗng = chữ sẽ được gõ/cập nhật sau (hội thoại, sắc lệnh) nên cũng đệm trước
+    if (marked || str === '') pad = Math.round(size * 0.3);
     const t = scene.add.text(x, y, str, {
       fontFamily: G.FONT, fontSize: size + 'px', color: color || '#ffffff', align: o.align || 'center',
-      stroke: o.stroke === undefined ? '#1b1030' : o.stroke, strokeThickness: o.sw === undefined ? Math.max(2, Math.round(size / 12)) : o.sw,
+      stroke: o.stroke === undefined ? '#1b1030' : o.stroke, strokeThickness: sw, padding: { top: pad, bottom: pad, left: 0, right: 0 },
       wordWrap: o.wrap ? { width: o.wrap, useAdvancedWrap: true } : undefined, lineSpacing: o.ls === undefined ? 2 : o.ls,
     });
-    t.setOrigin(o.ox === undefined ? 0.5 : o.ox, o.oy === undefined ? 0.5 : o.oy);
+    const oy = o.oy === undefined ? 0.5 : o.oy;
+    t.setOrigin(o.ox === undefined ? 0.5 : o.ox, oy);
+    if (pad) t.y += pad * (2 * oy - 1); // bù phần đệm để chữ giữ đúng vị trí
     if (o.shadow) t.setShadow(0, o.shadow, '#000000', 0, true, true);
     return t;
   };

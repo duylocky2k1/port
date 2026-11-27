@@ -14,6 +14,15 @@
     while (over() && fs > (min || 18)) { fs -= 2; t.setFontSize(fs); } return t; }
   G.slideBox = box;
 
+  // ảnh slide: giải mã sẵn từ data URI, đăng ký texture khi vẽ lần đầu
+  const PHOTOS = {};
+  Object.keys(window.SLIDE_IMAGES || {}).forEach(function (k) { const im = new Image(); im.src = window.SLIDE_IMAGES[k]; PHOTOS[k] = im; });
+  function photo(s, k) {
+    const key = 'ph_' + k, im = PHOTOS[k];
+    if (!s.textures.exists(key)) { if (!im || !im.complete || !im.naturalWidth) return null; s.textures.addImage(key, im).setFilter(Phaser.Textures.FilterMode.LINEAR); }
+    return key;
+  }
+
   // ---------- các khối nội dung ----------
   const BLOCKS = {
     cards: function (s, L, g, b, x, y, w, h) {
@@ -114,7 +123,15 @@
     if (it.sub) parts.push({ str: it.sub, size: 40, color: dark ? '#ffffff' : INK });
     if (it.body) parts.push({ str: it.body, size: 31, color: dark ? '#ffffff' : INK });
     if (it.foot) parts.push({ str: it.foot, size: 27, color: '#1f8a3a' });
-    const pillH = it.pill ? 52 : 0, availH = y + h - top - 26 - pillH;
+    let imgH = 0;
+    const pk = it.img ? photo(s, it.img) : null;
+    if (pk) { // ảnh nằm ở đáy thẻ, giữ nguyên tỉ lệ
+      const src = s.textures.get(pk).getSourceImage(), k = Math.min((w - 32) / src.width, h * 0.38 / src.height), pw = Math.round(src.width * k), ph = Math.round(src.height * k);
+      const px = Math.round(x + (w - pw) / 2), py = Math.round(y + h - 18 - ph);
+      box(g, px - 4, py - 4, pw + 8, ph + 8, INK, INK, 4); L.add(s.add.image(px, py, pk).setOrigin(0).setDisplaySize(pw, ph));
+      imgH = Math.round(h * 0.38) + 12; // cùng chiều cao chừa cho mọi thẻ để chữ thẳng hàng
+    }
+    const pillH = it.pill ? 52 : 0, availH = y + h - top - 26 - pillH - imgH;
     const objs = parts.map(function (p) { return { p: p, t: tx(s, L, 0, 0, p.str, p.size, p.color, { ox: align === 'center' ? 0.5 : 0, oy: 0, wrap: iw, align: align }) }; });
     const total = function () { return objs.reduce(function (a, o) { return a + o.t.height; }, 0) + 10 * Math.max(0, objs.length - 1); };
     let sc = 1; const ap = function (v) { sc = v; objs.forEach(function (o) { o.t.setFontSize(Math.round(o.p.size * sc)); }); };

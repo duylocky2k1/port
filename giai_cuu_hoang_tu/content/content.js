@@ -10,7 +10,7 @@
    SLIDE (dùng cho bài học, phần trình bày, phần giải thích):
      { tag:'PART 1', title:'TIÊU ĐỀ', lead:'câu dẫn (tùy chọn)', blocks:[ ...các khối xếp từ trên xuống... ] }
      Các loại khối:
-       { type:'cards', items:[{ head, title, sub, body, foot, pill, icon }], cols, arrows, align:'left'|'center', headColor, h }
+       { type:'cards', items:[{ head, title, sub, body, foot, pill, icon, img }], cols, arrows, align:'left'|'center', headColor, h }
        { type:'table', cols:['', 'CỘT 1', 'CỘT 2'], rows:[['NHÃN', 'ô', 'ô']], hl:<cột tô xanh>, arrows, colors:[...] }
        { type:'list',  items:['...'] hoặc [{ t:'dòng chính', d:'dòng phụ' }], cols:2, color }
        { type:'stats', title:'...', items:[{ v:'30%', t:'chú thích' }] }
@@ -18,6 +18,7 @@
        { type:'banner', text:'...', color:'green'|'yellow'|'dark'|'pink'|'white' }
        { type:'label', text:'...' }
      Slide đơn giản: { title:'...', body:'đoạn văn' }
+     img: tên ảnh trong content/slide-images.js (hiện ở đáy thẻ)
      icon: sun, tube, shield, shieldfull, shieldbroken, qr, girl, team, chest, choice, progress, trophy, chat, search, map, bell, star, quiz, heart, hand
    CÂU HỎI: { q:'...', options:['A','B','C','D'], answer:<chỉ số đúng, bắt đầu từ 0>, explain:[slide...] (tùy chọn) }
    ========================================================================== */
@@ -81,7 +82,7 @@ window.GAME_CONTENT = {
     npc: 'CÂY THÔNG THÁI',
     greeting: [
       'Ồ! Cuối cùng cũng có một chiến binh dũng cảm đặt chân đến Rừng Thông Thái!',
-      'Ta đã chờ đợi rất lâu để tìm ra người có đủ trí tuệ giải cứu Hoàng tử Campuchia khỏi nanh vuốt của Rồng Tri Thức.',
+      'Ta đã chờ đợi rất lâu để tìm ra người có đủ trí tuệ giải cứu Hoàng tử Campuchia khỏi nanh vuốt của Rồng Giáo Sư.',
       'Nhưng trước khi tiếp tục cuộc hành trình, ngươi phải chứng minh rằng mình xứng đáng!',
       'Để vượt qua khu rừng này, ngươi cần lắng nghe câu chuyện mà ta sắp kể và trả lời chính xác câu hỏi của ta.',
     ],
@@ -114,11 +115,11 @@ window.GAME_CONTENT = {
       { tag: 'PART 1', title: 'ỨNG DỤNG THỰC TẾ', lead: 'Cùng một công cụ, nhưng mỗi thương hiệu thiết kế cơ chế theo một mục đích marketing riêng.',
         blocks: [
           { type: 'cards', align: 'center', headColor: '#ffd43a', items: [
-            { head: '01', title: 'GIỚI THIỆU\nSẢN PHẨM MỚI', sub: 'M&M’s', body: 'Tìm chiếc pretzel ẩn giữa hàng trăm viên kẹo - muốn chơi thì phải nhìn kỹ đúng hương vị mới.' },
-            { head: '02', title: 'TÌM HIỂU &\nPHẢN HỒI', sub: 'Samsung', body: 'Xem video, viết đánh giá, hỏi đáp → nhận huy hiệu → đổi lượt bốc thăm sản phẩm.' },
-            { head: '03', title: 'PHÁT TRIỂN\nSẢN PHẨM', sub: 'KIND', body: 'Cuộc thi Raise the Bar: khách bình chọn hương vị tiếp theo của thương hiệu.' },
-            { head: '04', title: 'MUA LẶP LẠI', sub: 'Starbucks', body: 'Tích lũy qua mỗi lần mua, thanh tiến độ tiến dần tới mốc đổi thưởng.' },
-            { head: '05', title: 'THÚC ĐẨY\nMUA HÀNG', sub: 'Domino’s · McDonald’s', body: 'App tự tạo pizza; Monopoly giải 65 triệu đô; đua xe số trúng Tesla.' }] },
+            { head: '01', title: 'GIỚI THIỆU\nSẢN PHẨM MỚI', sub: 'M&M’s', img: 'mms', body: 'Tìm chiếc pretzel ẩn giữa hàng trăm viên kẹo - muốn chơi thì phải nhìn kỹ đúng hương vị mới.' },
+            { head: '02', title: 'TÌM HIỂU &\nPHẢN HỒI', sub: 'Samsung', img: 'samsung', body: 'Xem video, viết đánh giá, hỏi đáp → nhận huy hiệu → đổi lượt bốc thăm sản phẩm.' },
+            { head: '03', title: 'PHÁT TRIỂN\nSẢN PHẨM', sub: 'KIND', img: 'kind', body: 'Cuộc thi Raise the Bar: khách bình chọn hương vị tiếp theo của thương hiệu.' },
+            { head: '04', title: 'MUA LẶP LẠI', sub: 'Starbucks', img: 'starbucks', body: 'Tích lũy qua mỗi lần mua, thanh tiến độ tiến dần tới mốc đổi thưởng.' },
+            { head: '05', title: 'THÚC ĐẨY\nMUA HÀNG', sub: 'Domino’s · McDonald’s', img: 'mcd', body: 'App tự tạo pizza; Monopoly giải 65 triệu đô; đua xe số trúng Tesla.' }] },
         ] },
       { tag: 'PART 1', title: 'LỢI ÍCH CHO THƯƠNG HIỆU', lead: 'Ba lý do khiến trò chơi là một công cụ xúc tiến hiệu quả — và một điều quan trọng hơn cả.',
         blocks: [
@@ -156,7 +157,7 @@ window.GAME_CONTENT = {
     greeting: [
       'Ồ! Một vị khách hiếm hoi đã đặt chân đến Thư Viện Hoàng Gia!',
       'Ta nghe nói ngươi đã vượt qua thử thách của Cây Thông Thái và nhận được Áo Giáp Sức Mạnh. Quả là một chiến binh đáng gờm!',
-      'Nhưng sức mạnh thôi vẫn chưa đủ để đối đầu với Rồng Tri Thức đâu!',
+      'Nhưng sức mạnh thôi vẫn chưa đủ để đối đầu với Rồng Giáo Sư đâu!',
       'Muốn tiến xa hơn, ngươi phải hiểu được những lý thuyết quan trọng đang được lưu giữ tại thư viện này.',
       'Ta sẽ truyền đạt những kiến thức ấy cho ngươi. Hãy chú ý lắng nghe, bởi sau đó ta sẽ có một câu hỏi để kiểm tra trí tuệ của ngươi!',
     ],
@@ -512,7 +513,10 @@ window.GAME_CONTENT = {
           'Từ khóa: thiết kế BAO QUÁT + cho người chơi TỰ CHỌN hình thức tham gia.'] },
     ],
     // chữ bay theo tuyệt chiêu từng nhân vật [SPEC]
-    attackWords: { ngocngan: ['Trên Cao', 'Bớt đẳng cấp'], ngocgiao: ['Tới deadline rồi!', 'Nộp bài chưa?'], minhthu: ['Zhang et al.,'] },
+    attackWords: { ngocngan: ['Trên Cao', 'Bớt đẳng cấp'], ngocgiao: ['Tới deadline rồi!', 'Nộp bài chưa?'], minhthu: ['Zhang et al.,'],
+      ngocanh: ['Vẽ bậy rồi!', 'Màu gì đây?'], // [ĐỀ XUẤT] chờ nhóm duyệt
+      minhhien: ['p < 0.05!', 'Bác bỏ H₀!'], // [ĐỀ XUẤT] chờ nhóm duyệt
+      hoangthien: ['Ộp ộp!', 'Ếch bay!'] }, // [ĐỀ XUẤT] chờ nhóm duyệt
     journalWords: ['DOI', 'ABSTRACT', 'LITERATURE REVIEW', 'ZHANG ET AL.'],
     gameOver: ['HAHAHA! TRI THỨC CỦA NGƯƠI VẪN CHƯA ĐỦ ĐỂ ĐÁNH BẠI TA!', 'GIỜ THÌ HÃY CHUẨN BỊ ĐỌC 40 BÀI JOURNAL MỖI NGÀY ĐI!'],
     gameOverBtn: 'THỬ THÁCH LẠI!',

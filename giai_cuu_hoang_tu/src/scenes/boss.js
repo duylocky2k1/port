@@ -49,8 +49,11 @@
     }
     // chữ bay theo tuyệt chiêu [SPEC]: "Trên Cao", "Tới deadline rồi!", "Zhang et al.,"...
     const words = (CT().boss.attackWords || {})[id];
-    if (words) for (let i = 0; i < 8; i++) { const w = G.txt(s, 0, 0, words[i % words.length], 46, ['#ffd84a', '#ffffff', '#9fe8ff'][i % 3], { sw: 6 }).setDepth(55); fly(s, w, x0, y0 - 40, x1 + (i % 3) * 30 - 30, y1 - 40 + (i % 4) * 40, 700, 120, 150 + i * 160, function () { once(); G.burst(s, w.x, w.y, 'spark', 6, { speed: 160, life: 500, scale: 3 }); w.destroy(); }); }
-    s.time.delayedCall(words ? Math.max(total, 1700) : total, done);
+    // chữ bay chậm (2900 ms mỗi chữ, cách nhau 350 ms) để người xem kịp đọc; lượt chỉ kết thúc khi chữ cuối đã bay tới
+    const WORD_DUR = 2900, WORD_STEP = 350, WORD_START = 150;
+    if (words) for (let i = 0; i < 8; i++) { const w = G.txt(s, 0, 0, words[i % words.length], 46, ['#ffd84a', '#ffffff', '#9fe8ff'][i % 3], { sw: 6 }).setDepth(55); fly(s, w, x0, y0 - 40, x1 + (i % 3) * 30 - 30, y1 - 40 + (i % 4) * 40, WORD_DUR, 120, WORD_START + i * WORD_STEP, function () { once(); G.burst(s, w.x, w.y, 'spark', 6, { speed: 160, life: 500, scale: 3 }); w.destroy(); }); }
+    const wordsEnd = WORD_START + 7 * WORD_STEP + WORD_DUR;
+    s.time.delayedCall(words ? Math.max(total, wordsEnd) : total, done);
   };
 
 

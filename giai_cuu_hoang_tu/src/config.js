@@ -1,6 +1,7 @@
 // Namespace toàn cục (chạy từ file:// nên không dùng ES module)
 window.G = window.G || {};
 G.W = 1920; G.H = 1080;
+G.MARK_SW = 1; // độ dày viền tối đa cho chữ có dấu tiếng Việt (để undefined = giữ nguyên)
 G.FONT = 'VT323, monospace';
 G.DEV = /[?&]dev=1/.test(location.search);
 G.C = { // palette UI
