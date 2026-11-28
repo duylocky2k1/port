@@ -135,7 +135,7 @@
           G.beam(s, pl.x, gy, '#b98aff', n); s.time.delayedCall(500, function () { pl.alpha = 1; });
         },
         function (n) { fog(s, npc.x, gy - 160, 26); s.tweens.add({ targets: npc, alpha: 1, duration: 1200, delay: 300, onComplete: n }); },
-        function (n) { ctx.dlg.say(c.npc, c.greeting, n, npc); },
+        function (n) { ctx.dlg.say(c.npc, c.greeting, n, npc, function () { G.go(s, 'MapScene'); }, 'VỀ BẢN ĐỒ'); },
         function (n) { // giơ quyền trượng → 3 biểu tượng cửa phát sáng, chỉ Cửa 1 sáng tiếp
           s.tweens.add({ targets: npc, y: npc.y - 30, duration: 260, yoyo: true }); G.audio.sfx('teleport');
           doors.forEach(function (d, k) { s.time.delayedCall(200 + k * 250, function () { d.sym.setAlpha(1).setTint(0xffd84a); G.burst(s, d.sym.x, d.sym.y, 'spark', 12, { speed: 200, life: 600, scale: 3, depth: 30 }); }); });
@@ -227,7 +227,7 @@
           s.time.delayedCall(1500, function () { flakes.forEach(function (f, k) { s.tweens.add({ targets: f, alpha: 1, duration: 600, delay: k * 300 }); }); s.tweens.add({ targets: lock2, alpha: 1, duration: 600, delay: 300 }); setFlake(1, 'locked'); });
           s.time.delayedCall(2400, n);
         },
-        function (n) { ctx.dlg.say(c.npc, c.greeting, n, npc); },
+        function (n) { ctx.dlg.say(c.npc, c.greeting, n, npc, function () { G.go(s, 'MapScene'); }, 'VỀ BẢN ĐỒ'); },
         function (n) { s.tweens.add({ targets: npc, scaleX: npc.scaleX * 1.12, scaleY: npc.scaleY * 1.12, duration: 300, yoyo: true }); setFlake(0, 'active'); G.burst(s, FX[0], FY[0], 'snow', 24, { speed: 300, life: 800, scale: 4, depth: 30 });
           const b = G.button(s, G.W / 2, 900, 560, 96, c.startBtn, function () { b.destroy(); n(); }, { color: 'green', blink: true, size: 50 }).setDepth(520); },
         function (n) { walk(s, pl, FX[0] - 330, n); },

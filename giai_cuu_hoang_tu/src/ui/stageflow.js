@@ -26,7 +26,7 @@
     const t = G.txt(scene, G.W / 2, by + 110, text, 62, C.gold, { wrap: bw - 120, sw: 6 }).setDepth(521);
     const ring = scene.add.image(G.W / 2, by + 110, 'spark').setScale(0).setDepth(519);
     const b = G.button(scene, G.W / 2, by + bh - 76, 480, 84, btnLabel, function () { [panel, t, ring, b, bk].forEach(function (o) { if (o && o.destroy) o.destroy(); }); cb(); }, { color: 'green', blink: true, size: 46 }).setDepth(522);
-    const bk = backCb ? G.button(scene, bx + 200, by + bh - 76, 300, 84, 'QUAY LẠI', function () { [panel, t, ring, b, bk].forEach(function (o) { if (o && o.destroy) o.destroy(); }); backCb(); }, { color: 'blue', size: 40 }).setDepth(522) : null;
+    const bk = backCb ? G.button(scene, bx + 200, by + bh - 76, 300, 84, 'VỀ BẢN ĐỒ', function () { [panel, t, ring, b, bk].forEach(function (o) { if (o && o.destroy) o.destroy(); }); backCb(); }, { color: 'blue', size: 40 }).setDepth(522) : null;
     panel.setScale(0.6); panel.alpha = 0; scene.tweens.add({ targets: panel, alpha: 1, duration: 160 });
     G.burst(scene, G.W / 2, by + 110, 'spark', 18, { speed: 360, life: 700, scale: 3, depth: 523 }); G.audio.sfx('select');
     t.setAlpha(0); scene.tweens.add({ targets: t, alpha: 1, duration: 300, delay: 120 });
@@ -115,12 +115,16 @@
         onBack: function () { banner(function () { slidesStep(n); }); },
         warn: { title: 'CHƯA CẤU HÌNH NỘI DUNG BÀI HỌC', body: 'Người tạo game cần điền slide vào file content/content.js (mục pages của chặng này).\n\nBấm nút bên dưới để bỏ qua và thử luồng game.' } });
     };
+    // lời trước quiz: QUAY LẠI ở câu đầu thì xem lại trang giới thiệu case study
+    const preQuizStep = function (n) {
+      ctx.dlg.say(c.npc, c.preQuiz, n, ctx.npc, function () { slidesStep(function () { preQuizStep(n); }); });
+    };
     G.seq([
       function (n) { ctx.player.alpha = 0; if (ctx.npc) ctx.npc.alpha = 0; G.beam(scene, ctx.player.x, ctx.gy, cfg.beamColor, n); scene.time.delayedCall(500, function () { ctx.player.alpha = 1; if (ctx.npc) ctx.npc.alpha = 1; }); },
-      function (n) { if (cfg.onEnter) cfg.onEnter(scene, ctx); ctx.dlg.say(c.npc, c.greeting, n, ctx.npc); },
+      function (n) { if (cfg.onEnter) cfg.onEnter(scene, ctx); ctx.dlg.say(c.npc, c.greeting, n, ctx.npc, function () { G.go(scene, 'MapScene'); }, 'VỀ BẢN ĐỒ'); },
       banner,
       slidesStep,
-      function (n) { ctx.dlg.say(c.npc, c.preQuiz, n, ctx.npc); },
+      preQuizStep,
       function (n) { G.banner(scene, c.quizTitle, c.quizBtn, n, '#241848'); },
       function (n) { G.askQuestions(scene, c, cfg.hooks, n); },
       function (n) { G.ceremony(scene, cfg.treasure, n); },

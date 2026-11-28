@@ -82,7 +82,7 @@
   // ---------- hộp thoại ----------
   G.Dialog = function (scene) { this.scene = scene; this.objs = []; this.busy = false; };
   G.Dialog.prototype = {
-    say: function (name, lines, onDone, npc) {
+    say: function (name, lines, onDone, npc, onBack, backLabel) { // onBack: đưa về bước trước ở câu đầu; backLabel: nhãn nút ở câu đầu (mặc định QUAY LẠI)
       const s = this.scene, self = this; this.hide(); lines = [].concat(lines); let idx = 0, tw = null;
       const bx = 110, by = 770, bw = 1700, bh = 270;
       const panel = G.panel(s, bx, by, bw, bh, { fill: '#43260f', border: C.gold, rivets: true }).setDepth(500);
@@ -92,12 +92,12 @@
       const txt = G.txt(s, bx + 60, by + 44, '', 48, C.cream, { ox: 0, oy: 0, align: 'left', wrap: bw - 120, sw: 4 }).setDepth(502);
       const btn = G.button(s, bx + bw - 190, by + bh - 46, 280, 64, 'TIẾP TỤC', function () { adv(); }, { color: 'green', blink: true, size: 38 }).setDepth(503);
       // nút TRỞ LẠI đối xứng bên trái: quay về câu trước; các phần còn lại của ô vẫn bấm để tiếp tục
-      const back = G.button(s, bx + 190, by + bh - 46, 280, 64, 'TRỞ LẠI', function () { goBack(); }, { color: 'blue', size: 38 }).setDepth(503);
+      const back = G.button(s, bx + 190, by + bh - 46, 280, 64, 'QUAY LẠI', function () { goBack(); }, { color: 'blue', size: 38 }).setDepth(503);
       const zone = s.add.zone(bx, by, bw, bh).setOrigin(0).setInteractive().setDepth(499);
       this.objs = [panel, tag, nm, txt, btn, back, zone];
-      function show() { btn.setEnabled(false); back.setEnabled(true); if (npc && npc.talk) npc.talk(true); tw = G.typewrite(s, txt, lines[idx], 48, function () { if (npc && npc.talk) npc.talk(false); btn.setEnabled(true); }); }
+      function show() { btn.setEnabled(false); back.setEnabled(true); back.setLabel(idx === 0 && onBack && backLabel ? backLabel : 'QUAY LẠI'); if (npc && npc.talk) npc.talk(true); tw = G.typewrite(s, txt, lines[idx], 48, function () { if (npc && npc.talk) npc.talk(false); btn.setEnabled(true); }); }
       function adv() { if (!tw) return; if (!tw.done) { tw.skip(); return; } idx++; if (idx >= lines.length) { self.hide(); if (npc && npc.talk) npc.talk(false); if (onDone) onDone(); } else show(); }
-      function goBack() { if (!tw || idx === 0) return; tw.stop(); if (npc && npc.talk) npc.talk(false); idx--; show(); }
+      function goBack() { if (idx === 0) { if (onBack) { self.hide(); onBack(); } return; } if (tw) tw.stop(); if (npc && npc.talk) npc.talk(false); idx--; show(); }
       zone.on('pointerup', adv);
       this.keyFn = function (e) { if (e.code === 'Space' || e.code === 'Enter') adv(); }; s.input.keyboard.on('keydown', this.keyFn);
       this.tw = function () { return tw; };

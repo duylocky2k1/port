@@ -37,7 +37,7 @@
           G.burst(s, ctx.npc.x, 780, 'drop', 30, { speed: 400, life: 1000, scale: 3, gravity: 200 }); G.audio.sfx('teleport');
           ctx.npc.y = ctx.gy + 120; s.tweens.add({ targets: ctx.npc, alpha: 1, y: ctx.gy, duration: 1000, delay: 300, onComplete: n });
         },
-        function (n) { ctx.dlg.say(c.npc, c.greeting, n, ctx.npc); },
+        function (n) { ctx.dlg.say(c.npc, c.greeting, n, ctx.npc, function () { G.go(s, 'MapScene'); }, 'VỀ BẢN ĐỒ'); },
         function (n) { ctx.paged.show({ pages: [{ title: c.questionTitle, body: c.question }], heading: '', doneLabel: c.presentBtn, tone: 'water', onDone: n }); },
         function (n) { ctx.slides.show({ slides: c.presentation, heading: 'PHƯƠNG ÁN CỦA NHÓM', doneLabel: 'HOÀN THÀNH TRÌNH BÀY', color: '#4fb8e8', onDone: n,
             warn: { title: 'CHƯA CẤU HÌNH PHẦN TRÌNH BÀY', body: 'Người tạo game cần điền slide trình bày vào file content/content.js (mục stage3.presentation).\n\nBấm nút bên dưới để bỏ qua và thử luồng game.' } }); },
