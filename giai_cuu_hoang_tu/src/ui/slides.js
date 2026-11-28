@@ -208,7 +208,7 @@
       for (let x = R.x + 14; x < R.x + R.w - 22; x += 16) { deco.fillStyle(0x8fe86f, 1); deco.fillRect(x, gy - 6 + ((x / 16) % 2) * 3, 6, 6); deco.fillStyle(0x8a4a1c, 1); deco.fillRect(x + 4, gy + 26 + ((x / 16) % 3) * 8, 8, 4); }
       const clouds = [[420, 120], [1500, 200], [980, 70]].map(function (p) { return s.add.image(p[0], p[1], 'cloud').setScale(5).setAlpha(0.7).setDepth(601); });
       const ind = G.txt(s, G.W / 2, 1022, '', 38, '#ffffff').setDepth(603);
-      const back = G.button(s, 270, 1022, 340, 76, 'QUAY LẠI', function () { go(-1); }, { color: 'blue', size: 40 }).setDepth(603);
+      const back = G.button(s, 270, 1022, 340, 76, 'QUAY LẠI', function () { if (idx > 0) go(-1); else if (cfg.onBack) { self.hide(); cfg.onBack(); } }, { color: 'blue', size: 40 }).setDepth(603);
       const next = G.button(s, G.W - 290, 1022, 400, 76, 'TIẾP THEO', function () { go(1); }, { color: 'green', size: 40, blink: true }).setDepth(603);
       let L = null, g = null;
       this.objs = [dim, frame, deco, ind, back, next].concat(clouds);
@@ -216,7 +216,7 @@
         if (L) L.destroy(); L = s.add.container(0, 0).setDepth(602); g = s.add.graphics(); L.add(g);
         G.renderSlide(s, pages[idx], R, L, g);
         const n = pages.length; ind.setText((cfg.heading ? cfg.heading + '   ' : '') + (warned ? '' : (idx + 1) + '/' + n));
-        back.setVisible(idx > 0); back.setEnabled(idx > 0);
+        back.setVisible(true); back.setEnabled(true); // luôn bấm được; ở trang đầu: có onBack thì về bước trước, không có thì không làm gì
         next.setLabel(idx >= n - 1 ? (warned ? 'BỎ QUA & ĐI TIẾP' : (cfg.doneLabel || 'XONG')) : 'TIẾP THEO');
         L.alpha = 0.2; s.tweens.add({ targets: L, alpha: 1, duration: 160 });
       }

@@ -20,12 +20,13 @@
   G.seq = function (steps) { let i = 0; (function next() { if (i < steps.length) steps[i++](next); })(); };
 
   // ---- bảng thông báo thử thách ----
-  G.banner = function (scene, text, btnLabel, cb, color) {
+  G.banner = function (scene, text, btnLabel, cb, color, backCb) { // backCb: nếu có thì hiện nút QUAY LẠI bên trái
     const bx = 330, by = 250, bw = 1260, bh = 330;
     const panel = G.panel(scene, bx, by, bw, bh, { fill: color || '#43260f', border: C.gold, rivets: true }).setDepth(520);
     const t = G.txt(scene, G.W / 2, by + 110, text, 62, C.gold, { wrap: bw - 120, sw: 6 }).setDepth(521);
     const ring = scene.add.image(G.W / 2, by + 110, 'spark').setScale(0).setDepth(519);
-    const b = G.button(scene, G.W / 2, by + bh - 76, 480, 84, btnLabel, function () { [panel, t, ring, b].forEach(function (o) { o.destroy(); }); cb(); }, { color: 'green', blink: true, size: 46 }).setDepth(522);
+    const b = G.button(scene, G.W / 2, by + bh - 76, 480, 84, btnLabel, function () { [panel, t, ring, b, bk].forEach(function (o) { if (o && o.destroy) o.destroy(); }); cb(); }, { color: 'green', blink: true, size: 46 }).setDepth(522);
+    const bk = backCb ? G.button(scene, bx + 200, by + bh - 76, 300, 84, 'QUAY LẠI', function () { [panel, t, ring, b, bk].forEach(function (o) { if (o && o.destroy) o.destroy(); }); backCb(); }, { color: 'blue', size: 40 }).setDepth(522) : null;
     panel.setScale(0.6); panel.alpha = 0; scene.tweens.add({ targets: panel, alpha: 1, duration: 160 });
     G.burst(scene, G.W / 2, by + 110, 'spark', 18, { speed: 360, life: 700, scale: 3, depth: 523 }); G.audio.sfx('select');
     t.setAlpha(0); scene.tweens.add({ targets: t, alpha: 1, duration: 300, delay: 120 });
@@ -106,11 +107,19 @@
   G.runLearnStage = function (scene, cfg) {
     const ctx = G.stageSetup(scene, cfg), c = CT()[cfg.key];
     ctx.name = c.npc;
+    // bảng thử thách: QUAY LẠI thì về bản đồ
+    const banner = function (n) { G.banner(scene, c.challenge, c.learnBtn, n, cfg.bannerColor, function () { G.go(scene, 'MapScene'); }); };
+    // trang giới thiệu: QUAY LẠI ở trang 1 thì về bảng thử thách
+    const slidesStep = function (n) {
+      ctx.slides.show({ slides: c.pages, heading: c.pageHeading, doneLabel: 'XONG', onDone: n,
+        onBack: function () { banner(function () { slidesStep(n); }); },
+        warn: { title: 'CHƯA CẤU HÌNH NỘI DUNG BÀI HỌC', body: 'Người tạo game cần điền slide vào file content/content.js (mục pages của chặng này).\n\nBấm nút bên dưới để bỏ qua và thử luồng game.' } });
+    };
     G.seq([
       function (n) { ctx.player.alpha = 0; if (ctx.npc) ctx.npc.alpha = 0; G.beam(scene, ctx.player.x, ctx.gy, cfg.beamColor, n); scene.time.delayedCall(500, function () { ctx.player.alpha = 1; if (ctx.npc) ctx.npc.alpha = 1; }); },
       function (n) { if (cfg.onEnter) cfg.onEnter(scene, ctx); ctx.dlg.say(c.npc, c.greeting, n, ctx.npc); },
-      function (n) { G.banner(scene, c.challenge, c.learnBtn, n, cfg.bannerColor); },
-      function (n) { ctx.slides.show({ slides: c.pages, heading: c.pageHeading, doneLabel: 'XONG', onDone: n, warn: { title: 'CHƯA CẤU HÌNH NỘI DUNG BÀI HỌC', body: 'Người tạo game cần điền slide vào file content/content.js (mục pages của chặng này).\n\nBấm nút bên dưới để bỏ qua và thử luồng game.' } }); },
+      banner,
+      slidesStep,
       function (n) { ctx.dlg.say(c.npc, c.preQuiz, n, ctx.npc); },
       function (n) { G.banner(scene, c.quizTitle, c.quizBtn, n, '#241848'); },
       function (n) { G.askQuestions(scene, c, cfg.hooks, n); },

@@ -95,7 +95,7 @@
       const back = G.button(s, bx + 190, by + bh - 46, 280, 64, 'TRỞ LẠI', function () { goBack(); }, { color: 'blue', size: 38 }).setDepth(503);
       const zone = s.add.zone(bx, by, bw, bh).setOrigin(0).setInteractive().setDepth(499);
       this.objs = [panel, tag, nm, txt, btn, back, zone];
-      function show() { btn.setEnabled(false); back.setEnabled(idx > 0); if (npc && npc.talk) npc.talk(true); tw = G.typewrite(s, txt, lines[idx], 48, function () { if (npc && npc.talk) npc.talk(false); btn.setEnabled(true); }); }
+      function show() { btn.setEnabled(false); back.setEnabled(true); if (npc && npc.talk) npc.talk(true); tw = G.typewrite(s, txt, lines[idx], 48, function () { if (npc && npc.talk) npc.talk(false); btn.setEnabled(true); }); }
       function adv() { if (!tw) return; if (!tw.done) { tw.skip(); return; } idx++; if (idx >= lines.length) { self.hide(); if (npc && npc.talk) npc.talk(false); if (onDone) onDone(); } else show(); }
       function goBack() { if (!tw || idx === 0) return; tw.stop(); if (npc && npc.talk) npc.talk(false); idx--; show(); }
       zone.on('pointerup', adv);
@@ -126,7 +126,7 @@
         const p = pages ? pages[idx] : (cfg.warn || { title: 'CHƯA CẤU HÌNH NỘI DUNG', body: 'Người tạo game cần điền nội dung vào file\ncontent/content.js\n(mục pages / presentation của chặng này).\n\nBạn vẫn có thể bấm nút bên dưới để đi tiếp và thử luồng game.' });
         title.setText(p.title || ''); fit(p.body || ''); if (!pages) { title.setColor('#c0392b'); }
         const n = pages ? pages.length : 1; ind.setText(pages ? 'TRANG ' + (idx + 1) + '/' + n : '');
-        back.setVisible(idx > 0); back.setEnabled(idx > 0);
+        back.setVisible(true); back.setEnabled(true); // luôn bấm được; ở trang đầu không có trang trước nên không làm gì
         next.setLabel(idx >= n - 1 ? (pages ? (cfg.doneLabel || 'XONG') : 'BỎ QUA & ĐI TIẾP') : 'TIẾP TỤC');
       }
       function go(d) {
@@ -150,30 +150,31 @@
       const q = G.txt(s, bx + 60, by + 96, cfg.q, 42, '#ffffff', { ox: 0, oy: 0, align: 'left', wrap: bw - 120 }).setDepth(602);
       let fs = 42; while (q.height > 150 && fs > 26) { fs -= 2; q.setFontSize(fs); }
       this.objs = [dim, panel, head, q];
-      const opts = cfg.options, rows = [], optTexts = [], fits = []; let sel = -1, locked = false, y = by + 96 + Math.max(q.height, 60) + 24;
+      const opts = cfg.options, rows = [], optTexts = []; let sel = -1, locked = false, y = by + 96 + Math.max(q.height, 60) + 24;
       const letters = ['A', 'B', 'C', 'D', 'E'];
-      const avail = bh - (y - by) - 100, perRow = Math.min(cfg.rowMax || 100, Math.floor(avail / opts.length) - 10);
+      const avail = bh - (y - by) - 100, minRow = Math.min(cfg.rowMax || 100, Math.floor(avail / opts.length) - 10);
+      const startFs = minRow < 80 ? 32 : 40;
+      opts.forEach(function (o) { optTexts.push(G.txt(s, -bw / 2 + 120, 0, o, startFs, '#ffffff', { ox: 0, wrap: bw - 260, align: 'left', sw: 3 })); });
+      // cỡ chữ chung (câu hỏi và mọi đáp án) giảm dần tới khi tất cả vừa khung; đáp án nhiều dòng thì ô của nó cao hơn
+      let common = Math.min(parseInt(q.style.fontSize, 10), startFs), rh = [];
+      function fitRows(fsz) { optTexts.forEach(function (t) { t.setFontSize(fsz); }); rh = optTexts.map(function (t) { return Math.max(minRow, t.height + 24); }); return rh.reduce(function (a, b) { return a + b; }, 0) + 10 * (opts.length - 1) <= avail; }
+      while (common > 22 && !fitRows(common)) common -= 2;
+      fitRows(common); q.setFontSize(common);
       opts.forEach(function (o, i) {
-        const row = s.add.container(bx + bw / 2, y + perRow / 2), g = s.add.graphics();
-        const t = G.txt(s, -bw / 2 + 120, 0, o, perRow < 80 ? 32 : 40, '#ffffff', { ox: 0, wrap: bw - 260, align: 'left', sw: 3 });
-        while (t.height > perRow - 10 && parseInt(t.style.fontSize, 10) > 22) t.setFontSize(parseInt(t.style.fontSize, 10) - 2);
-        optTexts.push(t); fits.push(parseInt(t.style.fontSize, 10));
+        const h = rh[i], row = s.add.container(bx + bw / 2, y + h / 2), g = s.add.graphics();
+        const t = optTexts[i];
         const L = G.txt(s, -bw / 2 + 74, 0, letters[i], 46, C.gold);
-        row.add([g, L, t]); row.setSize(bw - 100, perRow).setDepth(603);
+        row.add([g, L, t]); row.rh = h; row.setSize(bw - 100, h).setDepth(603);
         function paint(state) { // normal | sel | ok | bad
-          g.clear(); const col = { normal: 0x3a2d6e, sel: 0x6a50c8, ok: 0x1d7a36, bad: 0x9a2a2a }[state], br = { normal: 0x1b1030, sel: 0xffd84a, ok: 0x7ae09a, bad: 0xff7a7e }[state];
-          g.fillStyle(br, 1); g.fillRect(-(bw - 100) / 2, -perRow / 2, bw - 100, perRow); g.fillStyle(col, 1); g.fillRect(-(bw - 100) / 2 + 5, -perRow / 2 + 5, bw - 110, perRow - 10);
-          if (state === 'sel') { g.fillStyle(0xffffff, 0.12); g.fillRect(-(bw - 100) / 2 + 5, -perRow / 2 + 5, bw - 110, 6); }
+          const hh = row.rh; g.clear(); const col = { normal: 0x3a2d6e, sel: 0x6a50c8, ok: 0x1d7a36, bad: 0x9a2a2a }[state], br = { normal: 0x1b1030, sel: 0xffd84a, ok: 0x7ae09a, bad: 0xff7a7e }[state];
+          g.fillStyle(br, 1); g.fillRect(-(bw - 100) / 2, -hh / 2, bw - 100, hh); g.fillStyle(col, 1); g.fillRect(-(bw - 100) / 2 + 5, -hh / 2 + 5, bw - 110, hh - 10);
+          if (state === 'sel') { g.fillStyle(0xffffff, 0.12); g.fillRect(-(bw - 100) / 2 + 5, -hh / 2 + 5, bw - 110, 6); }
         }
         paint('normal'); row.paint = paint; rows.push(row);
         row.setInteractive({ useHandCursor: true });
         row.on('pointerup', function () { if (locked) return; sel = i; rows.forEach(function (r, k) { r.paint(k === i ? 'sel' : 'normal'); }); confirm.setEnabled(true); G.audio.sfx('select'); });
-        self.objs.push(row); y += perRow + 10;
+        self.objs.push(row); y += h + 10;
       });
-      // câu hỏi và các đáp án dùng chung một cỡ chữ (cỡ nhỏ nhất trong số các phần đã vừa khung)
-      const common = Math.min(parseInt(q.style.fontSize, 10), ...fits);
-      optTexts.forEach(function (t) { t.setFontSize(common); });
-      q.setFontSize(common);
       const confirm = G.button(s, bx + bw / 2, by + bh - 50, 520, 72, 'XÁC NHẬN ĐÁP ÁN', function () {
         if (sel < 0 || locked) return; locked = true; confirm.setEnabled(false); const ok = sel === cfg.answer;
         rows[sel].paint(ok ? 'ok' : 'bad'); if (!ok && cfg.answer >= 0 && cfg.reveal) rows[cfg.answer].paint('ok');
@@ -190,7 +191,13 @@
             const zh = zt.height + 90; zg.fillStyle(0xffffff, 1); zg.fillRect(-zw / 2 - 6, -zh / 2 - 6, zw + 12, zh + 12); zg.fillStyle(0x1d7a36, 1); zg.fillRect(-zw / 2, -zh / 2, zw, zh); zg.setPosition(bx + bw / 2, by + bh / 2 - 30);
             [zg, zt].forEach(function (o) { o.setScale(0.6); o.alpha = 0; s.tweens.add({ targets: o, scale: 1, alpha: 1, duration: 600, ease: 'Back.easeOut' }); });
             self.objs.push(zg, zt);
-            const nb = G.button(s, bx + bw / 2, by + bh - 60, 480, 76, cfg.zoomBtn || 'TIẾP THEO', function () { nb.setEnabled(false); if (cfg.onResult) cfg.onResult(true); }, { color: 'green', blink: true, size: 42 }).setDepth(704); self.objs.push(nb);
+            const nb = G.button(s, bx + bw / 2 + 150, by + bh - 60, 480, 76, cfg.zoomBtn || 'TIẾP THEO', function () { nb.setEnabled(false); if (cfg.onResult) cfg.onResult(true); }, { color: 'green', blink: true, size: 42 }).setDepth(704); self.objs.push(nb);
+            // QUAY LẠI: trở về bảng chọn đáp án (giữ phương án đã chọn, xác nhận lại được)
+            const bk = G.button(s, bx + bw / 2 - 330, by + bh - 60, 400, 76, 'QUAY LẠI', function () {
+              bk.setEnabled(false); [zg, zt, nb, bk, res].forEach(function (o) { if (o && o.destroy) o.destroy(); });
+              rows.forEach(function (r, k) { r.setVisible(true); r.setAlpha(1); r.paint(k === sel ? 'sel' : 'normal'); });
+              q.setVisible(true); confirm.setVisible(true); confirm.setEnabled(true); locked = false;
+            }, { color: 'blue', size: 40 }).setDepth(704); self.objs.push(bk);
           });
           return;
         }

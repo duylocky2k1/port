@@ -119,6 +119,8 @@
       const txt = G.txt(s, cx - sw / 2 + 70, cy - sh / 2 + 36, '', 34, '#2a1a10', { ox: 0, oy: 0, align: 'left', wrap: sw - 120, sw: 0, ls: 4 }).setDepth(22);
       const full = d.paragraphs.join('\n\n'); txt.setText(full); let fs = 46; txt.setFontSize(fs); while (txt.height > sh - 80 && fs > 20) { fs -= 1; txt.setFontSize(fs); } txt.setText('');
       const btn = G.button(s, G.W / 2, 930, 560, 110, d.button, function () { G.go(s, 'MapScene'); }, { color: 'red', blink: true, size: 72 }).setDepth(40); btn.setEnabled(false); btn.alpha = 0.6;
+      // QUAY LẠI về màn chọn nhân vật (đối xứng với nút SẴN SÀNG)
+      G.button(s, 330, 930, 300, 110, 'QUAY LẠI', function () { G.go(s, 'CharacterSelect'); }, { color: 'blue', size: 40 }).setDepth(40);
       let tw = null;
       s.time.delayedCall(500, function () {
         G.audio.sfx('page'); s.tweens.add({ targets: scroll, scaleY: 1, duration: 650, ease: 'Back.easeOut', onComplete: function () {
